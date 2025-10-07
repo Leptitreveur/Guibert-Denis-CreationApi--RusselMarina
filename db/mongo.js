@@ -1,9 +1,10 @@
-/**
- * Connexion/Disconnection setup to MongoDB
- */
-
 import mongoose from "mongoose";
 
+/**
+ * MongoDB client connection options configurations
+ *
+ * @type {object}
+ */
 const clientOptions = {
   serverApi: {
     version: "1",
@@ -12,6 +13,14 @@ const clientOptions = {
   },
 };
 
+/**
+ * Establishes MongoDB connection
+ *
+ * @async
+ * @function DbConnection
+ * @returns {Promise<void>} Promise that resolves when connection is established
+ * @throws {Error} Throws error if connection fails
+ */
 export async function DbConnection() {
   mongoose.connection.on("error", (err) => {
     console.error("MongoDB Connexion error : ", err);
@@ -27,6 +36,14 @@ export async function DbConnection() {
   }
 }
 
+/**
+ * Close connection to MongoDB
+ *
+ * @async
+ * @function DbDisconnection
+ * @returns {Promise<void>} Promise that resolves when disconnection is complete
+ * @throws {Error} Throws error if disconnection fails
+ */
 export async function DbDisconnection() {
   try {
     await mongoose.disconnect();

@@ -1,6 +1,14 @@
 import { DbDisconnection } from "../db/mongo.js";
 import process from "node:process";
 
+/**
+ * Handles shutting down server gracefully with DB disconnection
+ *
+ * @async
+ * @function ServerShutdown
+ * @param {string} signal - system signal (SIGINT, SIGTERM, SIGUSR2)
+ * @returns {Promise<void>}
+ */
 async function ServerShutdown(signal) {
   console.log(`Signal received: ${signal}. Server shutting down...`);
 
@@ -15,6 +23,12 @@ async function ServerShutdown(signal) {
   }
 }
 
+/**
+ * Setup server shutdown
+ *
+ * @function SetupShutdown
+ * @returns {void}
+ */
 export function SetupShutdown() {
   process.on("SIGINT", () => ServerShutdown("SIGINT")); // Ctrl+C
   process.on("SIGTERM", () => ServerShutdown("SIGTERM")); // kill command
