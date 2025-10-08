@@ -1,9 +1,19 @@
-var express = require('express');
-var router = express.Router();
+import express from "express";
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+import userRoute from "./users.js";
+import reservationsRoute from "./reservations.js";
+import dashboardRoute from "./dashboard.js";
+import catwaysRoute from "./catways.js";
+
+const router = express.Router();
+
+router.get("/", function (req, res, next) {
+  res.render("index", { title: "Accueil" });
 });
 
-module.exports = router;
+router.use("/users", userRoute);
+router.use("/reservations", reservationsRoute);
+router.use("/dashboard", dashboardRoute);
+router.use("/catways", catwaysRoute);
+
+export default router;
