@@ -11,7 +11,6 @@ import { DbConnection } from "./db/mongo.js";
 import { SetupShutdown } from "./utils/serverShutdown.js";
 
 import indexRouter from "./routes/index.js";
-import usersRouter from "./routes/users.js";
 
 /**
  * Express application instance
@@ -44,6 +43,16 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 /**
+ * Configure Cors
+ */
+app.use(
+  cors({
+    exposeHeaders: ["Authorization"],
+    origin: "*",
+  })
+);
+
+/**
  * Configure middleware stack
  */
 app.use(logger("dev"));
@@ -56,7 +65,6 @@ app.use(express.static(path.join(__dirname, "public")));
  * Configure route handlers
  */
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 
 /**
  * 404 error handler -  catch all unmatched routes
