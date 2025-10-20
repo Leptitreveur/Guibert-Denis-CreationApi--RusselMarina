@@ -4,8 +4,8 @@ import userRoute from "./users.js";
 import reservationsRoute from "./reservations.js";
 import dashboardRoute from "./dashboard.js";
 import catwaysRoute from "./catways.js";
-import loginRoute from "./connexion";
-import logoutRoute from "./disconnection"
+import loginRoute from "./login.js";
+import logoutRoute from "./logout.js"
 
 const router = express.Router();
 
