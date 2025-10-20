@@ -1,5 +1,13 @@
 import asyncHandler from "../utils/asyncHandler.js";
 
+
+/**
+ * Handles login into tha app
+ * 
+ * @async
+ * @function Login
+ * @return {object} user's email returned if logged in successfully
+ */
 const loginRoute = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
