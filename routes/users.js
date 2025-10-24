@@ -1,13 +1,13 @@
 import express from "express";
+import { getAllUsers, getUserByEmail, addUser, updateUser, deleteUser } from "../services/users.js";
 
 const router = express.Router();
 
 /* ADD CRUD */
-router.get("/users/", getAllUsers);
-router.get("/users/:email", getUserByEmail);
-router.post("/users/", CreateUser);
-router.put("/users/:email", updateUser);
-router.delete("/users/:email", deleteUser);
-
+router.get("/", getAllUsers);
+router.get("/:email", getUserByEmail);
+router.post("/", addUser);
+router.put("/:email", updateUser);
+router.delete("/:email", deleteUser);
 
 export default router;

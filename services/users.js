@@ -13,7 +13,7 @@ import User from "../models/users.js";
  * Create user
  * 
  * @async
- * @function createUser
+ * @function addUser
  * @param {import('express').Request} req - Body: `name`, `firstname`, `username`, `email`, `password`.
  * @param {import('express').Response} res
  * @returns {Promise<void>} Send 201 with the user or 409 conflict - existing user.
@@ -22,7 +22,7 @@ import User from "../models/users.js";
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
  */
-const createUser = asyncHandler(async (req, res) => {
+const addUser = asyncHandler(async (req, res) => {
   const { name, firstname, username, email, password } = req.body;
 
   let existingUser = await User.findOne({
@@ -162,4 +162,4 @@ const deleteUser = asyncHandler(async (req, res) => {
   });
 });
 
-export { getAllUsers, getUserByEmail, createUser, updateUser, deleteUser };
+export { getAllUsers, getUserByEmail, addUser, updateUser, deleteUser };

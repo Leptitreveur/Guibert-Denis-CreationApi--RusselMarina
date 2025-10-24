@@ -2,7 +2,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/logout");
+router.get("/");
 
 export default router;
 
