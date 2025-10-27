@@ -1,7 +1,10 @@
 import express from "express";
+import checkJWT from "../middlewares/private";
 import { addReservation, getAllReservation, getReservationById, updateReservation, deleteReservation } from "../services/reservation.js";
 
 const router = express.Router();
+
+router.use(checkJWT);
 
 /* ADD CRUD */
 router.get("/:id/reservations", getAllReservation);

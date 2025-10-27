@@ -1,6 +1,6 @@
 import express from "express";
 
-// import loginRoute from "./login.js";
+import loginRoute from "./login.js";
 import userRoute from "./users.js";
 import catwaysRoute from "./catways.js";
 import reservationsRoute from "./reservations.js";
@@ -15,7 +15,7 @@ router.get("/", function (req, res, next) {
 });
 
 
-// router.use("/login", loginRoute);
+router.use("/login", loginRoute);
 router.use("/users", userRoute); 
 router.use("/catways", catwaysRoute);
 router.use("/reservations", reservationsRoute);

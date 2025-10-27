@@ -1,7 +1,10 @@
 import express from "express";
+import checkJWT from "../middlewares/private";
 import { addCatway, getAllCatways, getCatwayById, updateCatway, deleteCatway } from "../services/catways.js";
 
 const router = express.Router();
+
+router.use(checkJWT);
 
 /* ADD CRUD */
 router.get("/", getAllCatways);
