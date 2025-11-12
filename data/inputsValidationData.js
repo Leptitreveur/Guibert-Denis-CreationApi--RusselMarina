@@ -50,13 +50,13 @@ export const sequentialPatterns = {
 
 export const rulesByLayout = {
   login: {
-    username: /^(?=.*\p{N})(?=.*\p{L})[\p{L}\p{N}].{3,16}$/u,
+    email: /^[\w\_\-\.]+@[\w\-\.]+\.[a-zA-Z]{2,6}$/,
     password: /^(?=.*\p{N})(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^a-zA-Z0-9])(?!.*\s).{8,72}$/u,
   },
   user: {
     name: /^[\p{L}](?:[\p{L}\p{M}\s'-]{0,58}[\p{L}])?$/u,
     firstname: /^[\p{L}](?:[\p{L}\p{M}\s'-]{0,58}[\p{L}])?$/u,
-    username: /^(?=.*\p{N})(?=.*\p{L})[\p{L}\p{N}].{3,16}$/u,
+    username: /^[\p{L}\p{N}].{1,16}$/u,
     email: /^[\w\_\-\.]+@[\w\-\.]+\.[a-zA-Z]{2,6}$/,
     password: /^(?=.*\p{N})(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^a-zA-Z0-9])(?!.*\s).{8,72}$/u,
   },
@@ -68,13 +68,18 @@ export const rulesByLayout = {
   catway: {
     number: /^\p{N}{1,3}$/u,
     type: /^(long|short)$/,
-    state: /^\p{L}(?:[\p{L}\p{M}\p{N}'-]{0,200}[\p{L}.])$/u,
+    state: /^\p{L}(?:[\p{L}\p{M}\p{N}\s':;,"()-.!]{0,200}[\p{L}.!])$/u,
   },
 };
 
 export const requiredFields = {
-  login: ['username', 'password'],
+  login: ['email', 'password'],
   user: ['username', 'email', 'password'],
   reservation: ['catwayId', 'clientName', 'boatName', 'startDate', 'endDate'],
   catway: ['number', 'type', 'state'],
 };
+export const updatableFields = {
+  user: ['name', 'firstname', 'username', 'email', 'password'],
+  catway: ['state'],
+  reservation: ['startDate', 'endDate']
+}

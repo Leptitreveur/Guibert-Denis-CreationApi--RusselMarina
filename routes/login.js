@@ -1,9 +1,9 @@
 import express from "express";
-import authentification from "../services/authentification.js";
-import inputsValidation from '../utils/inputsValidation.js';
+import authentificate from "../services/authentification.js";
+import inputsValidation from '../middlewares/inputsValidation.js';
 
 const router = express.Router();
 
-router.post("/", inputsValidation('login'), authentification);
+router.post("/", inputsValidation('login', 'login'), authentificate);
 
 export default router;

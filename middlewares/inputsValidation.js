@@ -1,4 +1,4 @@
-import { sequentialPatterns, rulesByLayout, requiredFields } from '../data/inputsValidationData.js';
+import { sequentialPatterns, rulesByLayout, requiredFields, updatableFields } from '../data/inputsValidationData.js';
 
 function flattenSequentialPatterns() {
   const patterns = [];
@@ -14,17 +14,46 @@ function flattenSequentialPatterns() {
   return patterns;
 }
 
-function containsRequiredFields(bodydata, layout) {
+function containsRequiredFields(bodydata, layout, action) {
   return (req, res, next) => {
+    const bodyKeys = Object.keys(bodydata);
     const required = requiredFields[layout] || [];
-    const missing = required.filter((key) => !(key in bodydata));
+    const allowed = updatableFields[layout] || [];
 
-    if (missing.length > 0) {
+    if (bodyKeys.length === 0) {
       return res.status(400).json({
-        message: 'Missing required fields.',
-        data: { required, missing },
+        message: 'Empty request.',
       });
     }
+
+    if (action === 'add' || action === 'login') {
+      const unauthorizedRequiredFields = bodyKeys.filter((key) => !required.includes(key));
+      if (unauthorizedRequiredFields.length > 0) {
+        return res.status(400).json({
+          message: 'Unauthorized field(s) in the request',
+          data: { required, unauthorizedRequiredFields },
+        });
+      }
+
+      const missing = required.filter((key) => !bodyKeys.includes(key));
+      if (missing.length > 0) {
+        return res.status(400).json({
+          message: 'Missing required fields.',
+          data: { required, missing },
+        });
+      }
+    }
+
+    if (action === 'update') {
+      const unauthorizedAllowedFields = bodyKeys.filter((key) => !allowed.includes(key));
+      if (unauthorizedAllowedFields.length > 0) {
+        return res.status(400).json({
+          message: 'Unauthorized field(s) in the request',
+          data: { allowed, unauthorizedAllowedFields },
+        });
+      }
+    }
+
     return next();
   };
 }
@@ -38,7 +67,7 @@ function respectRules(bodydata, layout) {
           if (!rulesValue.test(dataValue)) {
             if (typeof dataValue !== 'string') {
               return res.status(400).json({ message: `Field : '${dataKey}' must be a string.` });
-            };
+            }
             return res.status(400).json({
               message: `Rules not respected.`,
               data: { dataKey, dataValue },
@@ -67,19 +96,28 @@ function containsSequentialPatterns(candidate) {
     return next();
   };
 }
-//==========================================================================================================================================
 
-function inputsValidation(layout) {
+function inputsValidation(layout, action) {
   return (req, res, next) => {
     if (!layout || !rulesByLayout || !requiredFields) {
       return res.status(500).json({
         message: `Validation's layout missing or invalid.`,
       });
     }
-    const { bodydata } = req.body;
+
+    const actionType = typeof action;
+    const allowedActions = ['add', 'update', 'login'];
+    if (actionType !== 'string' || !allowedActions.includes(action)) {
+      return res.status(500).json({
+        message: 'Action layout must be a string and have one of those value: add, update, login.',
+        data: { actionType, action, allowedActions },
+      });
+    }
+
+    const bodydata = req.body;
     const candidate = bodydata.password;
 
-    const required = containsRequiredFields(bodydata, layout);
+    const required = containsRequiredFields(bodydata, layout, action);
     const rules = respectRules(bodydata, layout);
     const patterns = containsSequentialPatterns(candidate);
 

@@ -9,47 +9,61 @@ const SECRET_KEY = process.env.SECRET_KEY;
  * Authentification function
  *
  * @async
- * @function authentification
+ * @function authentificate
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  * @returns {Promise<void>} Promise that resolves when authentification is successful
  * @see ../utils/asyncHandler.js
  */
-const authentification = asyncHandler(async (req, res) => {
+const authentificate = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  let user = await Users.findOne({ email }, "-__v -createdAt -updatedAt").select("+password");
+  let user = await Users.findOne({ email }).select("+password");
 
-  if (user) {
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (isMatch) {
-      delete user._doc.password;
-
-      const expiresIn = Math.floor(Date.now() / 1000) + (60 * 60 * 24);
-      const token = jwt.sign({ 
-        user: user 
-        }, 
-            SECRET_KEY, 
-        {
-            expiresIn: expiresIn,
-      });
-
-      res.header("Authorization", "Bearer " + token);
-
-      return res.status(200).json({
-          message: "Authentificate_succeded"
-        });
-    }
-
-    return res.status(403).json({
-      message: "Authentification failed",
+  if (!user) {
+    return res.status(404).json({
+        message: "User not found",
     });
   }
 
-  return res.status(404).json({
-      message: "User not found",
+  if (!user.password) {
+    return res.status(500).json({
+      message: "User password not found in database.",
+      data: user
+    });
+  }
+
+  if (typeof password !== 'string' || typeof user.password !== 'string') {
+    return res.status(400).json({
+      message: "Invalid password format.",
+    });
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (isMatch) {
+    delete user._doc.password;
+
+    const token = jwt.sign({ 
+      user: user 
+      }, 
+          SECRET_KEY, 
+      {
+          expiresIn: "24h",
+    });
+
+    res.header("Authorization", "Bearer " + token);
+    
+    return res.status(200).json({
+        message: "Authentificate_succeded"
+      });
+  }
+
+  return res.status(403).json({
+    message: "Authentification failed.",
+    data: user.password
   });
+
 });
 
-export default authentification;
+export default authentificate;
