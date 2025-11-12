@@ -23,7 +23,7 @@ const clientOptions = {
  */
 export async function DbConnection() {
   mongoose.connection.on("error", (err) => {
-    console.error("MongoDB Connexion error : ", err);
+    console.error("MongoDB Connection error : ", err);
   });
 
   try {
@@ -31,7 +31,7 @@ export async function DbConnection() {
     await mongoose.connection.db.admin().command({ ping: 1 });
     console.log("Pinged your deployment. Successfully connected to MongoDB.");
   } catch (err) {
-    console.log("Connexion error : ", err);
+    console.log("Connection error : ", err);
     throw err;
   }
 }

@@ -1,13 +1,17 @@
 import express from "express";
+import checkJWT from "../middlewares/private.js";
+import inputsValidation from '../middlewares/inputsValidation.js';
+import { getAllUsers, getUserByEmail, addUser, updateUser, deleteUser } from "../services/users.js";
 
 const router = express.Router();
 
-/* ADD CRUD */
-router.get("/users/", getAllUsers);
-router.get("/users/:email", getUserByEmail);
-router.post("/users/", CreateUser);
-router.put("/users/:email", updateUser);
-router.delete("/users/:email", deleteUser);
+// router.use(checkJWT);
 
+/* ADD CRUD */
+router.get("/", checkJWT, getAllUsers);
+router.get("/:email", checkJWT, getUserByEmail);
+router.post("/", inputsValidation('user', 'add'), addUser);
+router.put("/:email", checkJWT, inputsValidation('user', 'update'), updateUser);
+router.delete("/:email", checkJWT, deleteUser);
 
 export default router;

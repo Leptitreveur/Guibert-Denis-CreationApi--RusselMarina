@@ -1,8 +1,9 @@
 import express from "express";
-import loginRoute from "../services/login.js"
+import authentificate from "../services/authentification.js";
+import inputsValidation from '../middlewares/inputsValidation.js';
 
 const router = express.Router();
 
-router.post("/login", loginRoute);
+router.post("/", inputsValidation('login', 'login'), authentificate);
 
 export default router;

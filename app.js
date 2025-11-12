@@ -5,12 +5,18 @@
 import createError from "http-errors";
 import express from "express";
 import path from "path";
+import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { DbConnection } from "./db/mongo.js";
 import { SetupShutdown } from "./utils/serverShutdown.js";
+import cors from "cors";
 
 import indexRouter from "./routes/index.js";
+
+// Recreate __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Express application instance
@@ -30,11 +36,6 @@ DbConnection().catch((err) => {
     console.warn("MongoDB unavailable - downgrade mode");
   }
 });
-
-/**
- * Setup server shutdown handlers
- */
-SetupShutdown();
 
 /**
  * Configure view engine and template settings
@@ -74,6 +75,7 @@ app.use("/", indexRouter);
  * @param  {Express.NextFunction} next - Express next function
  */
 app.use(function (req, res, next) {
+  console.log("404 error handler");
   next(createError(404));
 });
 
@@ -86,13 +88,15 @@ app.use(function (req, res, next) {
  * @param {Express.NextFunction} next - Express next function
  */
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render("error");
 });
+
+/**
+* Setup server shutdown handlers
+*/
+SetupShutdown();
 
 export default app;
