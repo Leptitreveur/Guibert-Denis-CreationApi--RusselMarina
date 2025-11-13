@@ -1,4 +1,4 @@
-import { sequentialPatterns, rulesByLayout, requiredFields, updatableFields } from '../data/inputsValidationData.js';
+import { sequentialPatterns, rulesByLayout, requiredFields, usableFields } from '../data/inputsValidationData.js';
 
 function flattenSequentialPatterns() {
   const patterns = [];
@@ -18,7 +18,7 @@ function containsRequiredFields(bodydata, layout, action) {
   return (req, res, next) => {
     const bodyKeys = Object.keys(bodydata);
     const required = requiredFields[layout] || [];
-    const allowed = updatableFields[layout] || [];
+    const allowed = usableFields[layout] || [];
 
     if (bodyKeys.length === 0) {
       return res.status(400).json({

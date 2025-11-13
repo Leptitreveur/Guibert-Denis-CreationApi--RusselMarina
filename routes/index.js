@@ -18,7 +18,7 @@ router.get("/", function (req, res, next) {
 router.use("/login", loginRoute);
 router.use("/users", userRoute); 
 router.use("/catways", catwaysRoute);
-router.use("/reservations", reservationsRoute);
+router.use("/catways/:id/reservations", reservationsRoute);
 // router.use("/dashboard", dashboardRoute);
 // router.use("/logout", logoutRoute);
 

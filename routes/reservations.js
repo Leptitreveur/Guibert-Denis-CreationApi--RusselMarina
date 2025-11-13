@@ -4,15 +4,15 @@ import inputsValidation from '../middlewares/inputsValidation.js';
 import dateValidation from '../middlewares/dateValidation.js';
 import { addReservation, getAllReservation, getReservationById, updateReservation, deleteReservation } from "../services/reservation.js";
 
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 
 router.use(checkJWT);
 
 /* ADD CRUD */
-router.get("/:id/reservations", getAllReservation);
-router.get("/:id/reservations/:id", getReservationById);
-router.post("/:id/reservations", inputsValidation('reservation', 'add'), dateValidation, addReservation);
-router.put("/:id/reservations", inputsValidation('reservation', 'update'), dateValidation, updateReservation);
-router.delete("/:id/reservations/:id", deleteReservation);
+router.get("/", getAllReservation);
+router.get("/:idReservation", getReservationById);
+router.post("/", inputsValidation('reservation', 'add'), dateValidation, addReservation);
+router.put("/", inputsValidation('reservation', 'update'), dateValidation, updateReservation);
+router.delete("/:idReservation", deleteReservation);
 
 export default router;
