@@ -5,11 +5,10 @@ const { Schema } = mongoose;
 
 const reservationSchema = new Schema(
   {
-    catwayId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Catways',
-      required: [true, 'Catway ID is required.'],
-      match: [/^[0-9a-fA-F]{24}$/, 'Invalid catway ID.'],
+    catwayNumber: {
+      type: Number,
+      required: [true, 'Catways number is required.'],
+      match: [/^\p{N}{1,3}$/u, 'Invalid catway number.'],
     },
     clientName: {
       type: String,

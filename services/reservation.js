@@ -15,7 +15,7 @@ import { creationValidator, updateValidator } from '../utils/periodValidator.js'
  *
  * @async
  * @function addReservation
- * @param {import('express').Request} req - Body: `catwayId`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
+ * @param {import('express').Request} req - Body: `catwayNumber`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
  * @param {import('express').Response} res
  * @returns {Promise<void>} 201 with reservation.
  * @throws {ApiError} Period conflicted error from creationValidator..
@@ -26,11 +26,21 @@ import { creationValidator, updateValidator } from '../utils/periodValidator.js'
  * @see ../utils/periodValidator.js
  */
 const addReservation = asyncHandler(async (req, res) => {
-  const { catwayId, clientName, boatName, startDate, endDate, duration } = req.body;
+  const { id: catwayNumber } = req.params;
+  const { clientName, boatName, startDate, endDate, duration } = req.body;
 
-  await creationValidator(catwayId, startDate, endDate);
+  const catwayNum = Number(catwayNumber);
 
-  const reservation = await Reservation.create({ catwayId, clientName, boatName, startDate, endDate, duration });
+  if (isNaN(catwayNum)) {
+    return res.status(400).json({
+      message: 'Invalid catway number',
+      data: catwayNumber,
+    });
+  }
+
+  await creationValidator(catwayNum, startDate, endDate);
+
+  const reservation = await Reservation.create({ catwayNumber: catwayNum, clientName, boatName, startDate, endDate, duration });
 
   return res.status(201).json({
     message: 'Reservation successfully created.',
@@ -51,7 +61,17 @@ const addReservation = asyncHandler(async (req, res) => {
  * @see ../utils/asyncHandler.js
  */
 const getAllReservation = asyncHandler(async (req, res) => {
-  const reservations = await Reservation.find({});
+  const { id: catwayNumber } = req.params;
+  const catwayNum = Number(catwayNumber);
+
+  if (isNaN(catwayNum)) {
+    return res.status(400).json({
+      message: 'Invalid catway number',
+      data: catwayNumber,
+    });
+  }
+
+  const reservations = await Reservation.find({ catwayNumber: catwayNum });
 
   if (reservations.length > 0) {
     return res.status(200).json({
@@ -79,19 +99,33 @@ const getAllReservation = asyncHandler(async (req, res) => {
  * @see ../utils/asyncHandler.js
  */
 const getReservationById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id: catwayNumber, idReservation } = req.params;
 
-  const existingReservation = await Reservation.findById(id);
+  const catwayNum = Number(catwayNumber);
 
-  if (existingReservation) {
-    return res.status(200).json({
-      message: 'Reservation successfully found.',
-      data: existingReservation,
+  if (isNaN(catwayNum)) {
+    return res.status(400).json({
+      message: 'Invalid catway number',
+      data: catwayNumber,
     });
   }
 
-  return res.status(404).json({
-    message: 'Reservation not found.',
+  const existingReservation = await Reservation.findById(idReservation);
+
+  if (!existingReservation) {
+    return res.status(404).json({
+      message: 'Reservation not found.',
+    });
+  }
+  if (existingReservation.catwayNumber !== catwayNum) {
+    return res.status(400).json({
+      message: 'This reservation does not belong to the specified catway.',
+    });
+  }
+
+  return res.status(200).json({
+    message: 'Reservation successfully found.',
+    data: existingReservation,
   });
 });
 
@@ -101,7 +135,7 @@ const getReservationById = asyncHandler(async (req, res) => {
  *
  * @async
  * @function updateReservation
- * @param {import('express').Request} req - Params: `id`; Body: `catwayId`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
+ * @param {import('express').Request} req - Params: `id`; Body: `catwayNumber`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
  * @param {import('express').Response} res
  * @returns {Promise<void>} Send 200 with the updated reservation.
  * @throws {ApiError} Period conflict from updateValidator.
@@ -113,21 +147,41 @@ const getReservationById = asyncHandler(async (req, res) => {
  * @see ../utils/periodValidator.js
  */
 const updateReservation = asyncHandler(async (req, res) => {
-  const { catwayId, clientName, boatName, startDate, endDate, duration } = req.body;
-  const { id } = req.params;
+  const { id: catwayNumber } = req.params;
+  const {  idReservation, clientName, boatName, startDate, endDate, duration } = req.body;
+  const catwayNum = Number(catwayNumber);
 
-  await updateValidator(catwayId, startDate, endDate, id);
+  if (isNaN(catwayNum)) {
+    return res.status(400).json({
+      message: 'Invalid catway number',
+      data: catwayNumber,
+    });
+  }
 
-  const reservation = await Reservation.findByIdAndUpdate(id, { catwayId, clientName, boatName, startDate, endDate, duration }, { runValidators: true, new: true });
+  const existingReservation = await Reservation.findById(idReservation);
 
-  if (!reservation) {
+  if (!existingReservation) {
+    return res.status(404).json({ message: 'Reservation not found' });
+  }
+
+  if (existingReservation.catwayNumber !== catwayNum) {
+    return res.status(400).json({
+      message: 'This reservation does not belong to the specified catway.',
+    });
+  }
+
+  await updateValidator(catwayNum, startDate, endDate, idReservation);
+
+  const updatedReservation = await Reservation.findByIdAndUpdate(idReservation, { catwayNumber: catwayNum, clientName, boatName, startDate, endDate, duration }, { runValidators: true, new: true });
+
+  if (!updatedReservation) {
     return res.status(404).json({
       message: 'Reservation not found',
     });
   }
   return res.status(200).json({
     message: 'Reservation successfully updated.',
-    data: reservation,
+    data: updatedReservation,
   });
 });
 
@@ -145,9 +199,29 @@ const updateReservation = asyncHandler(async (req, res) => {
  * @see ../utils/asyncHandler.js
  */
 const deleteReservation = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id: catwayNumber, idReservation } = req.params;
+  const catwayNum = Number(catwayNumber);
 
-  const reservation = await Reservation.findByIdAndDelete(id);
+  if (isNaN(catwayNum)) {
+    return res.status(400).json({
+      message: 'Invalid catway number',
+      data: catwayNumber,
+    });
+  }
+
+  const existingReservation = await Reservation.findById(idReservation);
+
+  if (!existingReservation) {
+    return res.status(404).json({ message: 'Reservation not found' });
+  }
+
+  if (existingReservation.catwayNumber !== catwayNum) {
+    return res.status(400).json({
+      message: 'This reservation does not belong to the specified catway.',
+    });
+  }
+
+  const reservation = await Reservation.findByIdAndDelete(idReservation);
 
   if (reservation) {
     return res.status(200).json({
@@ -155,7 +229,6 @@ const deleteReservation = asyncHandler(async (req, res) => {
       data: reservation,
     });
   }
-
   return res.status(404).json({
     message: 'Reservation not found.',
   });

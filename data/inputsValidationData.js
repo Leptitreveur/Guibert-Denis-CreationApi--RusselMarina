@@ -61,7 +61,7 @@ export const rulesByLayout = {
     password: /^(?=.*\p{N})(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^a-zA-Z0-9])(?!.*\s).{8,72}$/u,
   },
   reservation: {
-    catwayId: /^[0-9a-fA-F]{24}$/,
+    idReservation: /^[0-9a-fA-F]{24}$/,
     clientName: /^[\p{L}](?:[\p{L}\p{M}\s'-]{0,58}[\p{L}])?$/u,
     boatName: /^[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}\s'-]{0,58}[\p{L}\p{N}])$/u,
   },
@@ -75,11 +75,11 @@ export const rulesByLayout = {
 export const requiredFields = {
   login: ['email', 'password'],
   user: ['username', 'email', 'password'],
-  reservation: ['catwayId', 'clientName', 'boatName', 'startDate', 'endDate'],
+  reservation: ['clientName', 'boatName', 'startDate', 'endDate'],
   catway: ['number', 'type', 'state'],
 };
-export const updatableFields = {
+export const usableFields = {
   user: ['name', 'firstname', 'username', 'email', 'password'],
   catway: ['state'],
-  reservation: ['startDate', 'endDate']
+  reservation: ['idReservation', 'startDate', 'endDate']
 }

@@ -14,15 +14,15 @@ import Reservation from "../models/reservation.js";
  * 
  * @async
  * @function creationValidator
- * @param {string} catwayId - The catway ID to check for conflicts.
+ * @param {string} catwayNumber - The catway number to check for conflicts.
  * @param {Date} startDate - Starting date of the reservation.
  * @param {Date} endDate - Ending date of the reservation.
  * @returns {Promise<bool>} Returns true if period is valid.
  * @throws {ApiError} Conflict error with details.
  */
-export async function creationValidator(catwayId, startDate, endDate) {
+export async function creationValidator(catwayNumber, startDate, endDate) {
   const invalidPeriod = await Reservation.findOne({
-    catwayId: catwayId,
+    catwayNumber: catwayNumber,
     startDate: { $lt: endDate },
     endDate: { $gt: startDate },
   });
@@ -33,7 +33,7 @@ export async function creationValidator(catwayId, startDate, endDate) {
       type: "CONFLICT",
       statusCode: 409,
       details: {
-        catwayId: invalidPeriod.catwayId,
+        catwayNumber: invalidPeriod.catwayNumber,
         existingPeriod: {
           start: invalidPeriod.startDate,
           end: invalidPeriod.endDate,
@@ -56,19 +56,19 @@ export async function creationValidator(catwayId, startDate, endDate) {
  * 
  * @async
  * @function updateValidator
- * @param {string} catwayId - The catway ID to check for conflicts.
+ * @param {string} catwayNumber - The catway number to check for conflicts.
  * @param {Date} startDate - Starting date of the reservation.
  * @param {Date} endDate - Ending date of the reservation.
- * @param {string} excludeReservationId - Id reservation to exclude from check.
+ * @param {string} excludeidReservation - Id reservation to exclude from check.
  * @returns {Promise<bool>} Returns true if update is valid.
  * @throws {ApiError} Conflict error with details. 
  */
-export async function updateValidator(catwayId, startDate, endDate, excludeReservationId) {
+export async function updateValidator(catwayNumber, startDate, endDate, excludeidReservation) {
   const invalidPeriod = await Reservation.findOne({
-    catwayId: catwayId,
+    catwayNumber: catwayNumber,
     startDate: { $lt: endDate },
     endDate: { $gt: startDate },
-    _id: { $ne: excludeReservationId },
+    _id: { $ne: excludeidReservation },
   });
 
   if (invalidPeriod) {
@@ -77,7 +77,7 @@ export async function updateValidator(catwayId, startDate, endDate, excludeReser
       type: "CONFLICT",
       statusCode: 409,
       details: {
-        catwayId: invalidPeriod.catwayId,
+        catwayNumber: invalidPeriod.catwayNumber,
         existingPeriod: {
           start: invalidPeriod.startDate,
           end: invalidPeriod.endDate,
@@ -86,7 +86,7 @@ export async function updateValidator(catwayId, startDate, endDate, excludeReser
           start: startDate,
           end: endDate,
         },
-        updatingReservationId: excludeReservationId,
+        updatingidReservation: excludeidReservation,
       },
     };
     throw error;
