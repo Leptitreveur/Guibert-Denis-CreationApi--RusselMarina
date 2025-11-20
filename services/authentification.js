@@ -55,12 +55,14 @@ const authentificate = asyncHandler(async (req, res) => {
     res.header("Authorization", "Bearer " + token);
     
     return res.status(200).json({
-        message: "Authentificate_succeded"
+        message: "Authentificate succeded",
+        login: true
       });
   }
 
   return res.status(403).json({
     message: "Authentification failed.",
+    login: false,
     data: user.password
   });
 

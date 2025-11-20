@@ -1,25 +1,33 @@
 import jwt from 'jsonwebtoken';
 import asyncHandler from '../utils/asyncHandler.js';
+import BlackListedToken from '../models/blackListedToken.js';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
 const checkJWT = asyncHandler(async (req, res, next) => {
   let token = req.headers['x-access-token'] || req.headers['authorization'];
 
-  if (token && token.startsWith('Bearer ')) {
+  if (token && token.startsWith('bearer ')) {
     token = token.slice(7, token.length);
   }
 
   if (!token) {
     return res.status(401).json({
-      message: 'token_required!',
+      message: 'token required!',
     });
   }
 
+  const isBlackListedToken = await BlackListedToken.findOne({ token });
+  if (isBlackListedToken) {
+    return res.status(401).json({
+      message: 'Token revoked',
+    });
+  }
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
       return res.status(401).json({
-        message: 'token_not_valid!',
+        message: 'token not valid!',
+        data: token,
       });
     }
     req.decoded = decoded;
