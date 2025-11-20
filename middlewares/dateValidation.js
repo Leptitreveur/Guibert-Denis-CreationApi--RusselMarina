@@ -1,8 +1,22 @@
-import { parseIsoDateUTC, startOfDayUTC, endOfDayUTC } from '../utils/dateFormatter.js';
+import { parseIsoDateUTC, startOfDayUTC, endOfDayUTC, formatDateOnly } from '../utils/dateFormatter.js';
+import Reservation from '../models/reservation.js';
 
-function dateValidation(req, res, next) {
-  const { startDate, endDate } = req.body;
+async function dateValidation(req, res, next) {
+  let { startDate, endDate } = req.body;
+  const { idReservation } = req.body;
+
+  const reservation = await Reservation.findById(idReservation);
   //Présence
+  if(!startDate){
+    const startUTC = reservation.startDate;
+    startDate = formatDateOnly(startUTC);
+  }
+
+  if(!endDate){
+    const endUTC = reservation.endDate;
+    endDate = formatDateOnly(endUTC);
+  }
+
   if (!startDate || !endDate) {
     return res.status(400).json({
       message: 'Start and end reservation date are required.',

@@ -5,7 +5,7 @@ import userRoute from "./users.js";
 import catwaysRoute from "./catways.js";
 import reservationsRoute from "./reservations.js";
 // import dashboardRoute from "./dashboard.js";
-// import logoutRoute from "./logout.js"
+import logout from './logout.js';
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.use("/users", userRoute);
 router.use("/catways", catwaysRoute);
 router.use("/catways/:id/reservations", reservationsRoute);
 // router.use("/dashboard", dashboardRoute);
-// router.use("/logout", logoutRoute);
+router.use("/logout", logout);
 
 
 export default router;

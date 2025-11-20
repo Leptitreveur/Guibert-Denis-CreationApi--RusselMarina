@@ -84,6 +84,12 @@ const getAllCatways = asyncHandler(async (req, res) => {
 */
 const getCatwayById = asyncHandler(async (req, res) => {
   const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({
+      message: 'Invalid Id.'
+    })
+  }
   
   const catway = await Catways.findById(id);
   

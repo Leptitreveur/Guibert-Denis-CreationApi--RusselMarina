@@ -1,8 +1,8 @@
-import express from "express";
+import express from 'express';
+import logout from '../services/logout.js';
 
 const router = express.Router();
 
-router.get("/");
+router.post('/', logout);
 
 export default router;
-

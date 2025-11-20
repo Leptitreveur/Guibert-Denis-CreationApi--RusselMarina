@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "module": "ESNext",
+      "target": "ES2020",
+      "checkJs": false,
+      "jsx": "preserve",
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+    },
+    "include": [
+      "**/*.js"
+    ],
+    "exclude": [
+      "node_modules",
+      "**/node_modules/**"
+    ]
+  }

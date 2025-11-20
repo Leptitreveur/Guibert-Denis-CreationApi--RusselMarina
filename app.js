@@ -54,6 +54,19 @@ app.use(
 );
 
 /**
+ * Sending HTTP traffic to HTTPS
+ */
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      next();
+    }
+  });
+}
+
+/**
  * Configure middleware stack
  */
 app.use(logger("dev"));
