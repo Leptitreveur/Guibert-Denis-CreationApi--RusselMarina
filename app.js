@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { DbConnection } from "./db/mongo.js";
-import { SetupShutdown } from "./utils/serverShutdown.js";
+import { setupShutdown } from "./utils/serverShutdown.js";
 import cors from "cors";
 
 import indexRouter from "./routes/index.js";
@@ -110,6 +110,6 @@ app.use(function (err, req, res, next) {
 /**
 * Setup server shutdown handlers
 */
-SetupShutdown();
+setupShutdown();
 
 export default app;

@@ -6,14 +6,18 @@ import Users from "../models/users.js";
 const SECRET_KEY = process.env.SECRET_KEY;
 
 /**
- * Authentification function
+ * authentication function
  *
  * @async
  * @function authentificate
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>} Promise that resolves when authentification is successful
+ * @param {import('express').Request} req - Request object. Body: `email`, `password` required.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with login status and JWT token in Authorization header or error codes (400,403,404,500)
+ * @throws {ValidationError} Mongoose validation failure
+ * @throws {MongoServerError} Database error
+ * @throws {Error} Propagated by asyncHandler to error middleware
  * @see ../utils/asyncHandler.js
+ * @see ../routes/login.js For complete documentation (HTTP status codes, ...) for that service
  */
 const authentificate = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -61,7 +65,7 @@ const authentificate = asyncHandler(async (req, res) => {
   }
 
   return res.status(403).json({
-    message: "Authentification failed.",
+    message: "authentication failed.",
     login: false,
     data: user.password
   });

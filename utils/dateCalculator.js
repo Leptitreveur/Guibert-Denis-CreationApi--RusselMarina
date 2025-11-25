@@ -1,27 +1,27 @@
 /**
- * ApiError structure for duration validation in reservation models
+ * API error structure for duration calculation errors
  * 
- * @typedef {object} ApiError
+ * @typedef {Object} ApiError
  * @property {string} message - error message.
  * @property {string} type - Error type ("BAD_REQUEST").
  * @property {number} statusCode - HTTP status code (400).
- * @property {object} [details] - Additional error details.
+ * @property {Object} [details] - Additional error details.
  */
 
 /**
- * Calculate the duration of the reservation
+ * Calculates the duration of the reservation
  * 
  * @function calculateDuration
- * @param {Date} start - Starting date of the reservation.
- * @param {Date} end - Ending date of the reservation.
- * @returns {number} Duration of the reservation in days.
- * @throws {ApiError} Bad request error with details.
+ * @param {Date} start - Starting date of the reservation
+ * @param {Date} end - Ending date of the reservation
+ * @returns {number} Duration of the reservation in days (rounded up)
+ * @throws {ApiError} Bad request error thrown when start or end date is missing
  */
 
 function calculateDuration(start, end) {
   if (!start || !end) {
     const error = {
-      message: "Start and end date are required",
+      message: "Start and end dates are required",
       type: "BAD_REQUEST",
       statusCode: 400,
       details: {

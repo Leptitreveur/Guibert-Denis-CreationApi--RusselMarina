@@ -4,7 +4,7 @@ import Catways from "../models/catways.js";
 /**
  * Catways CRUD handlers
  * 
- * All handlers are wrapped by asyncHandler, witch catches rejected promises
+ * All handlers are wrapped by asyncHandler, which catches rejected promises
  * and forwards errors to Express via `next(err)`.
  * @see ../utils/asyncHandler.js
 */
@@ -14,13 +14,14 @@ import Catways from "../models/catways.js";
  * 
  * @async
  * @function addCatway
- * @param {import('express').Request} req - Body: `number`, `type`, `state`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 201 with created catway or 409 if it already exists.
+ * @param {import('express').Request} req - Request object - Body: `number`, `type`, `state`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 201 with created catway or error code (409)
  * @throws {ValidationError} Mongoose validation failure.
  * @throws {MongoServerError} Database error (e.g., duplicate key).
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/catways.js For complete documentation (HTTP status codes, ...) for that service
 */
 const addCatway = asyncHandler(async (req, res) => {
   const { number, type, state } = req.body;
@@ -29,7 +30,7 @@ const addCatway = asyncHandler(async (req, res) => {
   
   if (existingCatway) {
     return res.status(409).json({
-      message: "This catway already exist.",
+      message: "This catway already exists.",
       data: existingCatway,
     });
   }
@@ -47,12 +48,13 @@ const addCatway = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function getAllCatways
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with array of catways or 404 if none found.
+ * @param {import('express').Request} req - Request object
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with array of catways or error code (404)
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/catways.js For complete documentation (HTTP status codes, ...) for that service
 */
 const getAllCatways = asyncHandler(async (req, res) => {
   let catways = await Catways.find({});
@@ -74,13 +76,14 @@ const getAllCatways = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function getCatwayById
- * @param {import('express').Request} req - Params: `id`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the catway or 404 if not found.
+ * @param {import('express').Request} req - Request object - Params: `id`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the catway or error codes (400,404)
  * @throws {CastError} Invalid ObjectId.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/catways.js For complete documentation (HTTP status codes, ...) for that service
 */
 const getCatwayById = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -101,7 +104,7 @@ const getCatwayById = asyncHandler(async (req, res) => {
   }
   
   return res.status(404).json({
-    message: "Catway not found.",
+    message: `Catway ${id} not found`,
   });
 });
 
@@ -112,14 +115,15 @@ const getCatwayById = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function updateCatway
- * @param {import('express').Request} req - Params: `id`; Body: `number`, `type`, `state`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the updated catway or 404 if not found.
+ * @param {import('express').Request} req - Request object - Params: `id`; Body: `number`, `type`, `state`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the updated catway or error code (404)
  * @throws {ValidationError} Mongoose validation failure.
  * @throws {CastError} Invalid ObjectId.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware. 
  * @see ../utils/asyncHandler.js
+ * @see ../routes/catways.js For complete documentation (HTTP status codes, ...) for that service
 */
 const updateCatway = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -135,7 +139,7 @@ const updateCatway = asyncHandler(async (req, res) => {
   }
   
   return res.status(404).json({
-    message: `Could not find catway ${id} to update.`,
+    message: `Catway ${id} not found`,
   });
 });
 
@@ -144,13 +148,14 @@ const updateCatway = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function deleteCatway
- * @param {import('express').Request} req - Params: `id`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the deleted catway or 404 not found
+ * @param {import('express').Request} req - Request object - Params: `id`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the deleted catway or error code (404)
  * @throws {CastError} Invalid ObjectId.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/catways.js For complete documentation (HTTP status codes, ...) for that service
 */
 const deleteCatway = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -165,7 +170,7 @@ const deleteCatway = asyncHandler(async (req, res) => {
   }
 
   return res.status(404).json({
-    message: `Could not find catway ${id} to delete`,
+    message: `Catway ${id} not found`,
   });
 });
 

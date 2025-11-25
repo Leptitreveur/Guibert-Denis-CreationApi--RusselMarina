@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Module dependencies.
+ * Server entry point
+ * 
+ * Initializes and starts the HTTPS server with SSL/TLS certificates.
+ * Handles port normalization, error handling, and server listening events.
+ */
+
+/**
+ * Module dependencies
  */
 import app from "../app.js";
 import debug from "debug";
@@ -16,27 +23,37 @@ const __dirname = path.dirname(__filename);
 const debugLog = debug('guibert-denis-creationapi--russelmarina:server');
 
 /**
- * Get port from environment and store in Express.
+ * Normalize and configure server port
+ * 
+ * Gets port from environment variable PORT or defaults to '3443'.
+ * Sets the port in Express application.
  */
 const port = normalizePort(process.env.PORT || '3443');
 app.set('port', port);
 
 /**
- * SSL/TLS certificate configuration 
+ * SSL/TLS certificate configuration
+ * 
+ * Loads private key and certificate files from the certificates directory
+ * to enable HTTPS connections.
  */
 const options = {
  key: fs.readFileSync(path.join(__dirname, '../certificates/private-key.pem')),
  cert: fs.readFileSync(path.join(__dirname, '../certificates/certificate.pem'))
-}
+};
 
 /**
- * Create HTTPS server.
+ * Create HTTPS server
+ * 
+ * Creates an HTTPS server instance with SSL/TLS certificates and Express app.
  */
 
 const server = https.createServer(options, app);
 
 /**
- * Listen on provided port, on all network interfaces.
+ * Start server and attach event listeners
+ * 
+ * Starts listening on the configuerd port and attaches error and listening event handlers.
  */
 server.listen(port);
 server.on('error', onError);
@@ -44,6 +61,13 @@ server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
+ * 
+ * Converts a port value (string or number) to a valid port number.
+ * Returns the original value if it's a named pipe, or false if invalid.
+ * 
+ * @function normalizePort
+ * @param {string|number} val - Port value to normalize
+ * @returns {number|string|false} Normalized port number, named pipe string, or false if invalid
  */
 function normalizePort(val) {
   const port = parseInt(val, 10);
@@ -62,7 +86,11 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for HTTP server "error" event.
+ * Event listener for HTTPS server "error" event.
+ * 
+ * @function onError
+ * @param {Error} error - Error object from the server
+ * @throws {Error} Re-throws error if it's not a listen error
  */
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -73,7 +101,6 @@ function onError(error) {
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -89,7 +116,10 @@ function onError(error) {
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener for HTTPS server "listening" event.
+ * 
+ * Logs the server address and port when the server starts listening.
+ * Uses debug logging for development purposes.
  */
 function onListening() {
   const addr = server.address();

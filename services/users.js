@@ -4,7 +4,7 @@ import User from "../models/users.js";
 /**
  * User CRUD handler.
  * 
- * All handlers are wrapped by asyncHandler, witch catches rejected promises
+ * All handlers are wrapped by asyncHandler, which catches rejected promises
  * and forwards errors to Express via `next(err)`.
  * @see ../utils/asyncHandler.js
  */
@@ -14,13 +14,14 @@ import User from "../models/users.js";
  * 
  * @async
  * @function addUser
- * @param {import('express').Request} req - Body: `name`, `firstname`, `username`, `email`, `password`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 201 with the user or 409 conflict - existing user.
+ * @param {import('express').Request} req - Request object - Body: `name`, `firstname`, `username`, `email`, `password`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 201 with the user or error codes (400,409)
  * @throws {ValidationError} Mongoose validation failure.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/users.js For complete route documentation (HTTP status codes, ...) for that service
  */
 const addUser = asyncHandler(async (req, res) => {
   const { name, firstname, username, email, password } = req.body;
@@ -48,24 +49,25 @@ const addUser = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function getAllUsers
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with array of users or 404 if none found.
+ * @param {import('express').Request} req - Request object
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with array of users or error codes (401,404)
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
+ * @see ../routes/users.js For complete route documentation (HTTP status codes, ...) for that service
  */
 const getAllUsers = asyncHandler(async (req, res) => {
   let users = await User.find({});
 
   if (users.length > 0) {
     return res.status(200).json({
-      message: "Users successfully found",
+      message: "Users successfully found.",
       data: users,
     });
   }
 
   return res.status(404).json({
-    message: "no users were found",
+    message: "No users were found.",
   });
 });
 
@@ -74,11 +76,12 @@ const getAllUsers = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function getUserByEmail
- * @param {import('express').Request} req - Params: `email`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the user or 404 not found.
+ * @param {import('express').Request} req - Request object - Params: `email`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the user or error codes (400,401,404)
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
+ * @see ../routes/users.js For complete route documentation (HTTP status codes, ...) for that service
  */
 const getUserByEmail = asyncHandler(async (req, res) => {
   const email = req.params.email;
@@ -87,7 +90,7 @@ const getUserByEmail = asyncHandler(async (req, res) => {
 
   if (user) {
     return res.status(200).json({
-      message: "User successfully found",
+      message: "User successfully found.",
       data: user,
     });
   }
@@ -102,13 +105,14 @@ const getUserByEmail = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function updateUser
- * @param {import('express').Request} req - Params: `email`; Body: `name`, `firstname`, `username`, `email`, `password`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with updated user or 404 not found.
+ * @param {import('express').Request} req - Request object - Params: `email`; Body: `name`, `firstname`, `username`, `email`, `password`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with updated user or error codes (400,401,409)
  * @throws {ValidationError} Mongoose validation failure.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/users.js For complete route documentation (HTTP status codes, ...) for that service
  */
 const updateUser = asyncHandler(async (req, res) => {
   const { email } = req.params;
@@ -129,7 +133,7 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 
   return res.status(404).json({
-    message: "User's email not found.",
+    message: "User not found.",
   });
 });
 
@@ -138,12 +142,13 @@ const updateUser = asyncHandler(async (req, res) => {
  * 
  * @async
  * @function deleteUser
- * @param {import('express').Request} req - Params: `email`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with deleted user or 404 not found.
+ * @param {import('express').Request} req - Request object - Params: `email`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with deleted user or error codes (400,401,404)
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/users.js For complete route documentation (HTTP status codes, ...) for that service
  */
 const deleteUser = asyncHandler(async (req, res) => {
   let email = req.params.email;
@@ -158,7 +163,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 
   return res.status(404).json({
-    message: "User's email not found",
+    message: "User not found.",
   });
 });
 

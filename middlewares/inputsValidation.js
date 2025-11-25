@@ -1,5 +1,13 @@
 import { sequentialPatterns, rulesByLayout, requiredFields, usableFields } from '../data/inputsValidationData.js';
 
+/**
+ * Flatten sequential patterns function
+ * 
+ * Convert the sequential patterns object into an array ready to use.
+ * 
+ * @returns {Array<string>} Array of sequential patterns 
+ * @see ../data/inputsValidationData.js For complete documentation
+ */
 function flattenSequentialPatterns() {
   const patterns = [];
   for (const level1 of Object.values(sequentialPatterns)) {
@@ -14,7 +22,22 @@ function flattenSequentialPatterns() {
   return patterns;
 }
 
-function containsRequiredFields(bodydata, layout, action) {
+/**
+ * Check required fields presence function
+ * 
+ * Returns a middleware that checks the request body data to verify the presence 
+ * of required or allowed fields regarding the layout and service being used.
+ * 
+ * @param {Object} bodydata - Requested body data (keys) 
+ * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login') 
+ * @param {string} service - Selected service passed on by inputsValidation middleware (required, must be 'add', 'update', 'login')
+ * @returns {Function} Express middleware function that validates required/allowed fields
+ * @throws {400} Empty request
+ * @throws {400} Unauthorized field(s) in the request
+ * @throws {400} Missing required fields
+ * @see ../data/inputsValidationData.js For complete documentation
+ */
+function containsRequiredFields(bodydata, layout, service) {
   return (req, res, next) => {
     const bodyKeys = Object.keys(bodydata);
     const required = requiredFields[layout] || [];
@@ -26,7 +49,7 @@ function containsRequiredFields(bodydata, layout, action) {
       });
     }
 
-    if (action === 'add' || action === 'login') {
+    if (service === 'add' || service === 'login') {
       const unauthorizedRequiredFields = bodyKeys.filter((key) => !required.includes(key));
       if (unauthorizedRequiredFields.length > 0) {
         return res.status(400).json({
@@ -44,7 +67,7 @@ function containsRequiredFields(bodydata, layout, action) {
       }
     }
 
-    if (action === 'update') {
+    if (service === 'update') {
       const unauthorizedAllowedFields = bodyKeys.filter((key) => !allowed.includes(key));
       if (unauthorizedAllowedFields.length > 0) {
         return res.status(400).json({
@@ -58,6 +81,19 @@ function containsRequiredFields(bodydata, layout, action) {
   };
 }
 
+/**
+ * Check rules application function
+ * 
+ * Returns a middleware function that checks that the request body data respect regex rules 
+ * regarding the layout being used.
+ * 
+ * @param {Object} bodydata - Requested body data (required)
+ * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login')
+ * @returns {Function} Express middleware function that validates field rules
+ * @throws {400} Field must be a string
+ * @throws {400} Rules not respected
+ * @see ../data/inputsValidationData.js For complete documentation
+ */
 function respectRules(bodydata, layout) {
   return (req, res, next) => {
     const rules = rulesByLayout[layout] || {};
@@ -79,25 +115,55 @@ function respectRules(bodydata, layout) {
     return next();
   };
 }
-
-function containsSequentialPatterns(candidate) {
+/**
+ * Check sequential patterns presence function
+ * 
+ * Returns a middleware function that checks that the password does not contain any sequential patterns
+ * from flattenSequentialPatterns array regarding layout and service being used.
+ * 
+ * @param {string} candidate - Password passed on by inputsValidation middleware for validation (required)
+ * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login')
+ * @param {string} service - Selected service passed on by inputsValidation middleware (required, must be 'add', 'update', 'login')
+ * @returns {Function} Express middleware function that validates password are sequential patterns free
+ * @throws {400} Password contains sequential patterns
+ * @see ../data/inputsValidationData.js For complete documentation
+ */
+function containsSequentialPatterns(candidate, layout, service) {
   return (req, res, next) => {
-    if (typeof candidate !== 'string') {
-      return next();
-    }
-    const allSequentialPatterns = flattenSequentialPatterns();
-    const containsPatterns = allSequentialPatterns.some((patterns) => candidate.includes(patterns));
+    if (layout === 'users' && (service === 'add' || service === 'update')) {
+      if (typeof candidate !== 'string') {
+        return next();
+      }
 
-    if (containsPatterns) {
-      return res.status(400).json({
-        message: 'Password should not contain simple keyboard sequence.',
-      });
+      const allSequentialPatterns = flattenSequentialPatterns();
+      const containsPatterns = allSequentialPatterns.some((patterns) => candidate.includes(patterns));
+
+      if (containsPatterns) {
+        return res.status(400).json({
+          message: 'Password contains sequential patterns.',
+        });
+      }
+      return next();
     }
     return next();
   };
 }
-
-function inputsValidation(layout, action) {
+/**
+ * Inputs validation middleware
+ * 
+ * Returns a middleware function that applies all the validation process functions
+ * to users's inputs (in the request body) regarding the layout (sub-route) and service being used.
+ * Verifies the presence of layout parameter (and its type), rulesByLayout and
+ * requiredFields before starting the validation process.
+ *  
+ * @param {string} layout - Selected sub-route being used (required, must be 'users', 'reservations', 'catways', 'login') 
+ * @param {string} service - Selected service being used (required, must be 'add', 'update', 'login')
+ * @returns {Function} Express middleware function that validates request body inputs
+ * @throws {500} Validation's layout missing or invalid
+ * @throws {500} Service layout must be a string and have one of those values: add, update, login
+ * @see ../data/inputsValidationData.js For complete documentation
+ */
+function inputsValidation(layout, service) {
   return (req, res, next) => {
     if (!layout || !rulesByLayout || !requiredFields) {
       return res.status(500).json({
@@ -105,21 +171,22 @@ function inputsValidation(layout, action) {
       });
     }
 
-    const actionType = typeof action;
-    const allowedActions = ['add', 'update', 'login'];
-    if (actionType !== 'string' || !allowedActions.includes(action)) {
+    const serviceType = typeof service;
+    const allowedservices = ['add', 'update', 'login'];
+
+    if (serviceType !== 'string' || !allowedservices.includes(service)) {
       return res.status(500).json({
-        message: 'Action layout must be a string and have one of those value: add, update, login.',
-        data: { actionType, action, allowedActions },
+        message: 'Service layout must be a string and have one of those values: add, update, login.',
+        data: { serviceType, service, allowedservices },
       });
     }
 
     const bodydata = req.body;
     const candidate = bodydata.password;
 
-    const required = containsRequiredFields(bodydata, layout, action);
+    const required = containsRequiredFields(bodydata, layout, service);
     const rules = respectRules(bodydata, layout);
-    const patterns = containsSequentialPatterns(candidate);
+    const patterns = containsSequentialPatterns(candidate, layout, service);
 
     return required(req, res, (err) => {
       if (err) return;

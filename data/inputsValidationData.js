@@ -1,3 +1,13 @@
+/**
+ * Keyboard sequential patterns
+ * 
+ * Contains common sequential patterns on azerty, qwerty and numpad keyboard.
+ * 
+ * @typedef {Object} sequentialPatterns
+ * @property {Object} qwerty - QWERTY keyboard patterns
+ * @property {Object} azerty - AZERTY keyboard patterns
+ * @property {Object} numpad - NUMPAD keyboard patterns
+ */
 export const sequentialPatterns = {
   qwerty: {
     specialRow: {
@@ -48,38 +58,71 @@ export const sequentialPatterns = {
   },
 };
 
+/**
+ * Regex rules by layout
+ * 
+ * Contains all regex input rules by layout (regex flag u = unicode).
+ * 
+ * @typedef {Object} rulesByLayout
+ * @property {Array<string>} login - Validation rules for login (includes: email, password)
+ * @property {Array<string>} users - Validation rules for users (includes: name, firstname, username, email, password)
+ * @property {Array<string>} reservations - Validation rules for reservations (includes: idReservation, clientName, boatName) 
+ * @property {Array<string>} catways - Validation rules for catways (includes: number, type, state)
+ */
 export const rulesByLayout = {
   login: {
     email: /^[\w\_\-\.]+@[\w\-\.]+\.[a-zA-Z]{2,6}$/,
     password: /^(?=.*\p{N})(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^a-zA-Z0-9])(?!.*\s).{8,72}$/u,
   },
-  user: {
+  users: {
     name: /^[\p{L}](?:[\p{L}\p{M}\s'-]{0,58}[\p{L}])?$/u,
     firstname: /^[\p{L}](?:[\p{L}\p{M}\s'-]{0,58}[\p{L}])?$/u,
     username: /^[\p{L}\p{N}].{1,16}$/u,
     email: /^[\w\_\-\.]+@[\w\-\.]+\.[a-zA-Z]{2,6}$/,
     password: /^(?=.*\p{N})(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^a-zA-Z0-9])(?!.*\s).{8,72}$/u,
   },
-  reservation: {
+  reservations: {
     idReservation: /^[0-9a-fA-F]{24}$/,
     clientName: /^[\p{L}](?:[\p{L}\p{M}\s'-]{0,58}[\p{L}])?$/u,
     boatName: /^[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}\s'-]{0,58}[\p{L}\p{N}])$/u,
   },
-  catway: {
+  catways: {
     number: /^\p{N}{1,3}$/u,
     type: /^(long|short)$/,
     state: /^\p{L}(?:[\p{L}\p{M}\p{N}\s':;,"()-.!]{0,200}[\p{L}.!])$/u,
   },
 };
 
+/**
+ * Required fields
+ * 
+ * Contains a list of required fields for the request to be valid when submitted.
+ * 
+ * @typedef {Object} requiredFields
+ * @property {Array<string>} login - Required fields for login request
+ * @property {Array<string>} users - Required fields for users request
+ * @property {Array<string>} reservations - Required fields for reservations request
+ * @property {Array<string>} catways - Required fields for catways request
+ */
 export const requiredFields = {
   login: ['email', 'password'],
-  user: ['username', 'email', 'password'],
-  reservation: ['clientName', 'boatName', 'startDate', 'endDate'],
-  catway: ['number', 'type', 'state'],
+  users: ['username', 'email', 'password'],
+  reservations: ['clientName', 'boatName', 'startDate', 'endDate'],
+  catways: ['number', 'type', 'state'],
 };
+
+/**
+ * Usable fields on update
+ * 
+ * Contains usable fields for update operations that can be used in the request.
+ * 
+ * @typedef {Object} usableFields
+ * @property {Array<string>} users - Users request - fields allowed for update operation
+ * @property {Array<string>} catways - Catways request - fields allowed for update operation
+ * @property {Array<string>} reservations - Reservations request - fields allowed for update operation
+ */
 export const usableFields = {
-  user: ['name', 'firstname', 'username', 'email', 'password'],
-  catway: ['state'],
-  reservation: ['idReservation', 'startDate', 'endDate']
+  users: ['name', 'firstname', 'username', 'email', 'password'],
+  catways: ['state'],
+  reservations: ['idReservation', 'startDate', 'endDate']
 }

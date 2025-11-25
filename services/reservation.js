@@ -15,15 +15,16 @@ import { creationValidator, updateValidator } from '../utils/periodValidator.js'
  *
  * @async
  * @function addReservation
- * @param {import('express').Request} req - Body: `catwayNumber`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} 201 with reservation.
- * @throws {ApiError} Period conflicted error from creationValidator..
+ * @param {import('express').Request} req - Request object - catwayNumber: `catwayNumber` Body: `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 201 with reservation or error codes (400,409)
+ * @throws {ApiError} Period conflicted error from creationValidator.
  * @throws {ValidationError} Mongoose validation failure.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
  * @see ../utils/periodValidator.js
+ * @see ../routes/reservations.js For complete documentation (HTTP status codes, ...) for that service
  */
 const addReservation = asyncHandler(async (req, res) => {
   const catwayNumber = req.catwayNumber;
@@ -51,12 +52,13 @@ const addReservation = asyncHandler(async (req, res) => {
  *
  * @async
  * @function getAllReservation
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with array of reservations or 404 if none found.
+ * @param {import('express').Request} req - Request object - catwayNumber: `catwayNumber`
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with array of reservations or error code (400,404)
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/reservations.js For complete documentation (HTTP status codes, ...) for that service
  */
 const getAllReservation = asyncHandler(async (req, res) => {
   const catwayNumber = req.catwayNumber;
@@ -80,13 +82,14 @@ const getAllReservation = asyncHandler(async (req, res) => {
  *
  * @async
  * @function getReservationById
- * @param {import('express').Request} req - Params: `id`
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the reservation or 404 not found.
+ * @param {import('express').Request} req - Request object - reservation: `reservation`
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the reservation or error code (400,404)
  * @throws {CastError} Invalid ObjectId.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/reservations.js For complete documentation (HTTP status codes, ...) for that service
  */
 const getReservationById = asyncHandler(async (req, res) => {
   const reservation = req.reservation;
@@ -110,9 +113,9 @@ const getReservationById = asyncHandler(async (req, res) => {
  *
  * @async
  * @function updateReservation
- * @param {import('express').Request} req - Params: `id`; Body: `catwayNumber`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the updated reservation.
+ * @param {import('express').Request} req - Request object - catwayNumber: `catwayNumber`; Body: `idReservation`, `catwayNumber`, `clientName`, `boatName`, `startDate`, `endDate`, `duration`.
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the updated reservation or error code (400,409)
  * @throws {ApiError} Period conflict from updateValidator.
  * @throws {ValidationError} Mongoose validation failure.
  * @throws {CastError} Invalid ObjectId.
@@ -120,6 +123,7 @@ const getReservationById = asyncHandler(async (req, res) => {
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
  * @see ../utils/periodValidator.js
+ * @see ../routes/reservations.js For complete documentation (HTTP status codes, ...) for that service
  */
 const updateReservation = asyncHandler(async (req, res) => {
   const catwayNumber = req.catwayNumber;
@@ -140,13 +144,14 @@ const updateReservation = asyncHandler(async (req, res) => {
  *
  * @async
  * @function deleteReservation
- * @param {import('express').Request} req - Params: `id`.
- * @param {import('express').Response} res
- * @returns {Promise<void>} Send 200 with the deleted reservation or 404 not found
+ * @param {import('express').Request} req - Request object - reservation: `reservation`
+ * @param {import('express').Response} res - Response object
+ * @returns {Promise<void>} Send 200 with the deleted reservation or error code (404)
  * @throws {CastError} Invalid ObjectId.
  * @throws {MongoServerError} Database error.
  * @throws {Error} Propagated by asyncHandler to error middleware.
  * @see ../utils/asyncHandler.js
+ * @see ../routes/reservations.js For complete documentation (HTTP status codes, ...) for that service
  */
 const deleteReservation = asyncHandler(async (req, res) => {
   const reservation = req.reservation;
