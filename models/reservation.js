@@ -23,7 +23,7 @@ const reservationSchema = new Schema(
   {
     catwayNumber: {
       type: Number,
-      required: [true, 'Catways number is required.'],
+      required: [true, `Catway's number is required.`],
       match: [/^\p{N}{1,3}$/u, 'Invalid catway number.'],
     },
     clientName: {

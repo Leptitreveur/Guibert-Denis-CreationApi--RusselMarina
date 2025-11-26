@@ -93,7 +93,7 @@ export async function updateValidator(catwayNumber, startDate, endDate, excludeI
           start: startDate,
           end: endDate,
         },
-        updatingidReservation: excludeIdReservation,
+        updatingIdReservation: excludeIdReservation,
       },
     };
     throw error;

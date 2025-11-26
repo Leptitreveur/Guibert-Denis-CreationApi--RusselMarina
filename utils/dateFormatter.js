@@ -62,7 +62,7 @@ export function parseIsoDateUTC(iso) {
 /**
  * Converts a Date object in UTC format to an ISO date string (YYYY-MM-DD)
  *
- * Formats a Date object format in UTC format and retunrs an ISO date string (YYYY-MM-DD).
+ * Formats a Date object (formatted in UTC format) and returns an ISO date string (YYYY-MM-DD).
  *
  * @function formatUTCDateToISO
  * @param {Date} date - Date object in UTC to format

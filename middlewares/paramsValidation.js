@@ -31,8 +31,8 @@ function paramsValidation(layout) {
       const { id } = req.params;
       const isValidId = mongoose.Types.ObjectId.isValid(id);
       if (!isValidId) {
-        return res.status(500).json({
-          message: 'Invalid ID params.',
+        return res.status(400).json({
+          message: 'Invalid ID parameter',
         });
       }
       return next();

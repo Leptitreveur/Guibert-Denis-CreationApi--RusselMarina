@@ -6,9 +6,9 @@ import BlackListedToken from '../models/blackListedToken.js';
  *
  * @async
  * @function logout
- * @param {import('express').Request} req - Request object. Headers: `x-access-token` or `authorization` (with "Bearer " prefix) required.
+ * @param {import('express').Request} req - Request object - Token must be provided via: Cookie `token`.
  * @param {import('express').Response} res - Response object
- * @returns {Promise<void>} Send 200 with logout status or error code (401)
+ * @returns {Promise<void>} Send 200 with logout status and clear the token in the cookie or error code (401)
  * @throws {ValidationError} Mongoose validation failure
  * @throws {MongoServerError} Database error
  * @throws {Error} Propagated by asyncHandler to error middleware.
@@ -16,10 +16,10 @@ import BlackListedToken from '../models/blackListedToken.js';
  * @see ../routes/logout.js For complete documentation (HTTP status codes, ...) for that service
  */
 const logout = asyncHandler(async (req, res) => {
-  let token = req.headers['x-access-token'] || req.headers['authorization'];
+  let token = req.cookies['token'];
 
-  if (token && token.startsWith('bearer ')) {
-    token = token.slice(7, token.length);
+  if (token) {
+    token = token.replace(/^bearer\s+/i, '');
   }
 
   if (!token) {
@@ -38,8 +38,14 @@ const logout = asyncHandler(async (req, res) => {
   }
   await BlackListedToken.create({ token });
 
+  res.clearCookie('token', {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'strict',
+  });
+
   return res.status(200).json({
-    message: 'Successfully logout',
+    message: 'Successfully logged out',
     logout: true,
   });
 });

@@ -9,17 +9,17 @@ const SECRET_KEY = process.env.SECRET_KEY;
  * authentication function
  *
  * @async
- * @function authentificate
+ * @function authentication
  * @param {import('express').Request} req - Request object. Body: `email`, `password` required.
  * @param {import('express').Response} res - Response object
- * @returns {Promise<void>} Send 200 with login status and JWT token in Authorization header or error codes (400,403,404,500)
+ * @returns {Promise<void>} Send 200 with login status and JWT token stored in secure HTTP-only cookie named 'token' (expires in 24h), or error codes (400,403,404,500)
  * @throws {ValidationError} Mongoose validation failure
  * @throws {MongoServerError} Database error
  * @throws {Error} Propagated by asyncHandler to error middleware
  * @see ../utils/asyncHandler.js
  * @see ../routes/login.js For complete documentation (HTTP status codes, ...) for that service
  */
-const authentificate = asyncHandler(async (req, res) => {
+const authentication = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   let user = await Users.findOne({ email }).select('+password');
@@ -58,19 +58,23 @@ const authentificate = asyncHandler(async (req, res) => {
       }
     );
 
-    res.header('Authorization', 'Bearer ' + token);
+    res.cookie('token', token, {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
-      message: 'Authentificate succeded',
+      message: 'Authentication succeeded',
       login: true,
     });
   }
 
   return res.status(403).json({
-    message: 'authentication failed.',
+    message: 'Authentication failed.',
     login: false,
-    data: user.password,
   });
 });
 
-export default authentificate;
+export default authentication;

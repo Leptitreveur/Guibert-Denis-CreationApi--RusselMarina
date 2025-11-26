@@ -25,21 +25,25 @@ const debugLog = debug('guibert-denis-creationapi--russelmarina:server');
 /**
  * Normalize and configure server port
  *
- * Gets port from environment variable PORT or defaults to '3443'.
+ * Gets port from environment variable HTTPS_PORT or defaults to '3443'.
  * Sets the port in Express application.
  */
-const port = normalizePort(process.env.PORT || '3443');
+const port = normalizePort(process.env.HTTPS_PORT || '3443');
 app.set('port', port);
 
 /**
  * SSL/TLS certificate configuration
  *
- * Loads private key and certificate files from the certificates directory
- * to enable HTTPS connections.
+ * Loads private key and certificate files from paths specified in environment variables
+ * (SSL_KEY_PATH and SSL_CERT_PATH) or defaults to certificates directory.
+ * This enables HTTPS connections.
  */
+const sslKeyPath = process.env.SSL_KEY_PATH || path.join(__dirname, '../certificates/private-key.pem');
+const sslCertPath = process.env.SSL_CERT_PATH || path.join(__dirname, '../certificates/certificate.pem');
+
 const options = {
-  key: fs.readFileSync(path.join(__dirname, '../certificates/private-key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, '../certificates/certificate.pem')),
+  key: fs.readFileSync(sslKeyPath),
+  cert: fs.readFileSync(sslCertPath),
 };
 
 /**
@@ -53,7 +57,7 @@ const server = https.createServer(options, app);
 /**
  * Start server and attach event listeners
  *
- * Starts listening on the configuerd port and attaches error and listening event handlers.
+ * Starts listening on the configured port and attaches error and listening event handlers.
  */
 server.listen(port);
 server.on('error', onError);

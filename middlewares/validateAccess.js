@@ -24,7 +24,7 @@ export const validateCatwayId = asyncHandler(async (req, res, next) => {
 
   if (!id) {
     return res.status(400).json({
-      message: 'catway ID is required',
+      message: 'Catway ID is required',
     });
   }
 

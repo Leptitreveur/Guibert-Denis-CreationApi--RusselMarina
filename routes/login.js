@@ -1,5 +1,5 @@
 import express from 'express';
-import authentificate from '../services/authentication.js';
+import authentication from '../services/authentication.js';
 import inputsValidation from '../middlewares/inputsValidation.js';
 
 const router = express.Router();
@@ -11,7 +11,7 @@ const router = express.Router();
  * @param {Object} body - Request body
  * @param {string} body.email - User's email (required)
  * @param {string} body.password - User's password (required)
- * @returns {Object} Login status with message, login flag and JWT token in Authorization header
+ * @returns {Object} Login status with message, login flag and JWT token in secure HTTP-only Cookie named `token`
  * @throws {400} Empty request
  * @throws {400} Invalid password format
  * @throws {400} Missing required fields
@@ -21,6 +21,6 @@ const router = express.Router();
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  * @throws {500} User password not found in database
  */
-router.post('/', inputsValidation('login', 'login'), authentificate);
+router.post('/', inputsValidation('login', 'login'), authentication);
 
 export default router;

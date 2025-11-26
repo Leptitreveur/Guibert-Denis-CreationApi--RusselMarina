@@ -1,7 +1,7 @@
 import express from 'express';
 import checkJWT from '../middlewares/private.js';
 import inputsValidation from '../middlewares/inputsValidation.js';
-import paramsValidataion from '../middlewares/paramsValidation.js';
+import paramsValidation from '../middlewares/paramsValidation.js';
 import { addCatway, getAllCatways, getCatwayById, updateCatway, deleteCatway } from '../services/catways.js';
 
 const router = express.Router();
@@ -66,8 +66,8 @@ router.post('/', inputsValidation('catways', 'add'), addCatway);
  * @throws {400} Rules not respected
  * @throws {401} Token required/revoked/invalid
  * @throws {404} Catway not found
- * @throws {500} Validation'layout missing or invalid
- * @throws {500} Service layout must be a string and have one of this values: add, update, login
+ * @throws {500} Validation's layout missing or invalid
+ * @throws {500} Service layout must be a string and have one of this values: 'add', 'update', 'login'
  * @throws {500} Invalid ID parameter
  * @throws {500} Invalid layout parameter
  */

@@ -1,5 +1,5 @@
 import express from 'express';
-import checkJWT from '../middlewares/private';
+import checkJWT from '../middlewares/private.js';
 
 const router = express.Router();
 
