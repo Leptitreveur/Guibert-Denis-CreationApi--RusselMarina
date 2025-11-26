@@ -2,11 +2,8 @@
   "name": "guibert-denis-creationapi--russelmarina",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "start": "env-cmd -f ./env/.env nodemon ./bin/www",
-    "dev": "env-cmd -f ./env/.env.dev nodemon ./bin/www",
-    "prod": "env-cmd -f ./env/.env.prod nodemon ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -18,7 +15,7 @@
     "express-session": "^1.18.2",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.2",
+    "mongoose": "^8.19.0",
     "morgan": "^1.10.1"
   },
   "devDependencies": {
