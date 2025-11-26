@@ -1,11 +1,11 @@
 /**
  * Period validator utilities
- * 
+ *
  * Provides functions to validate reservation periods and prevent overlapping
  * reservations on the same catway.
  */
 
-import Reservation from "../models/reservation.js";
+import Reservation from '../models/reservation.js';
 
 /**
  * ApiError structure for period validation conflicts.
@@ -18,7 +18,7 @@ import Reservation from "../models/reservation.js";
 
 /**
  * Validates a period creation to prevent overlapping reservations.
- * 
+ *
  * @async
  * @function creationValidator
  * @param {number} catwayNumber - The catway number to check for conflicts.
@@ -36,8 +36,8 @@ export async function creationValidator(catwayNumber, startDate, endDate) {
 
   if (invalidPeriod) {
     const error = {
-      message: "Data conflict detected.",
-      type: "CONFLICT",
+      message: 'Data conflict detected.',
+      type: 'CONFLICT',
       statusCode: 409,
       details: {
         catwayNumber: invalidPeriod.catwayNumber,
@@ -60,7 +60,7 @@ export async function creationValidator(catwayNumber, startDate, endDate) {
 /**
  * Validates an updated period to prevent overlapping reservations.
  * Excludes the current reservation being updated from conflict check.
- * 
+ *
  * @async
  * @function updateValidator
  * @param {number} catwayNumber - The catway number to check for conflicts.
@@ -68,7 +68,7 @@ export async function creationValidator(catwayNumber, startDate, endDate) {
  * @param {Date} endDate - Ending date of the reservation.
  * @param {string} excludeIdReservation - Id reservation to exclude from check.
  * @returns {Promise<boolean>} Returns true if update is valid.
- * @throws {ApiError} Conflict error with details. 
+ * @throws {ApiError} Conflict error with details.
  */
 export async function updateValidator(catwayNumber, startDate, endDate, excludeIdReservation) {
   const invalidPeriod = await Reservation.findOne({
@@ -80,8 +80,8 @@ export async function updateValidator(catwayNumber, startDate, endDate, excludeI
 
   if (invalidPeriod) {
     const error = {
-      message: "Data conflict detected.",
-      type: "CONFLICT",
+      message: 'Data conflict detected.',
+      type: 'CONFLICT',
       statusCode: 409,
       details: {
         catwayNumber: invalidPeriod.catwayNumber,
@@ -93,7 +93,7 @@ export async function updateValidator(catwayNumber, startDate, endDate, excludeI
           start: startDate,
           end: endDate,
         },
-        updatingidReservation: excludeIdReservation,
+        updatingIdReservation: excludeIdReservation,
       },
     };
     throw error;

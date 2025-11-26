@@ -7,7 +7,8 @@ const router = express.Router();
 /**
  * @route POST /logout
  * @description Disconnect user from his account
- * Requires JWT token in header: `x-access-token` or `authorization` (with "Bearer " prefix).
+ * Requires JWT token in:
+ * - Cookie: `token` (primary method, automatically sent by browser)
  * @access Private (JWT)
  * @returns {Object} Logout status with message and logout flag
  * @throws {401} Token required/revoked/invalid

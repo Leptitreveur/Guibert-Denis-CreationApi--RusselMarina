@@ -44,12 +44,17 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 /**
- * Configure Cors
+ * Configure CORS
+ *
+ * Enables cross-origin requests with cookie support.
+ * credentials: true is required to allow HTTP-only cookies (JWT tokens) 
+ * to be sent and received across different origins.
+ * When credentials is true, origin must be a specific domain (not "*").
  */
 app.use(
   cors({
-    exposeHeaders: ["Authorization"],
-    origin: "*",
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    credentials: true,
   })
 );
 
@@ -58,8 +63,8 @@ app.use(
  */
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https') {
-      res.redirect(`https://${req.header('host')}${req.url}`);
+    if (req.get('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.get('host')}${req.url}`);
     } else {
       next();
     }
@@ -81,7 +86,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 
 /**
- * 404 error handler -  catch all unmatched routes
+ * 404 error handler -  Catch all unmatched routes
  *
  * @param  {Express.Request} req - Express request object
  * @param  {Express.Response} res - Express response object
@@ -108,7 +113,7 @@ app.use(function (err, req, res, next) {
 });
 
 /**
-* Setup server shutdown handlers
+* Set up server shutdown handlers
 */
 setupShutdown();
 

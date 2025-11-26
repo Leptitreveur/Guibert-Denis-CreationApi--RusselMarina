@@ -1,8 +1,8 @@
-import express from "express";
-import checkJWT from "../middlewares/private.js";
+import express from 'express';
+import checkJWT from '../middlewares/private.js';
 import inputsValidation from '../middlewares/inputsValidation.js';
-import paramsValidation from "../middlewares/paramsValidation.js";
-import { getAllUsers, getUserByEmail, addUser, updateUser, deleteUser } from "../services/users.js";
+import paramsValidation from '../middlewares/paramsValidation.js';
+import { getAllUsers, getUserByEmail, addUser, updateUser, deleteUser } from '../services/users.js';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ const router = express.Router();
  * @throws {401} Token required/revoked/invalid
  * @throws {404} No users were found
  */
-router.get("/", checkJWT, getAllUsers);
+router.get('/', checkJWT, getAllUsers);
 
 /**
  * @route GET /users/:email
@@ -26,7 +26,7 @@ router.get("/", checkJWT, getAllUsers);
  * @throws {401} Token required/revoked/invalid
  * @throws {404} User not found
  */
-router.get("/:email", checkJWT, paramsValidation('users'), getUserByEmail);
+router.get('/:email', checkJWT, paramsValidation('users'), getUserByEmail);
 
 /**
  * @route POST /users
@@ -49,7 +49,7 @@ router.get("/:email", checkJWT, paramsValidation('users'), getUserByEmail);
  * @throws {500} Validation's layout missing or invalid
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  */
-router.post("/", inputsValidation('users', 'add'), addUser);
+router.post('/', inputsValidation('users', 'add'), addUser);
 
 /**
  * @route PUT /users/:email
@@ -74,7 +74,7 @@ router.post("/", inputsValidation('users', 'add'), addUser);
  * @throws {500} Validation's layout missing or invalid
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  */
-router.put("/:email", checkJWT, paramsValidation('users'), inputsValidation('users', 'update'), updateUser);
+router.put('/:email', checkJWT, paramsValidation('users'), inputsValidation('users', 'update'), updateUser);
 
 /**
  * @route DELETE /users/:email
@@ -86,6 +86,6 @@ router.put("/:email", checkJWT, paramsValidation('users'), inputsValidation('use
  * @throws {401} Token required/revoked/invalid
  * @throws {404} User not found
  */
-router.delete("/:email", checkJWT, paramsValidation('users'), deleteUser);
+router.delete('/:email', checkJWT, paramsValidation('users'), deleteUser);
 
 export default router;

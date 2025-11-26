@@ -1,12 +1,12 @@
-import express from "express";
-import checkJWT from "../middlewares/private.js";
+import express from 'express';
+import checkJWT from '../middlewares/private.js';
 import inputsValidation from '../middlewares/inputsValidation.js';
 import dateValidation from '../middlewares/dateValidation.js';
-import { validateCatwayId } from "../middlewares/validateAccess.js";
-import { validateReservationId } from "../middlewares/validateAccess.js";
-import { addReservation, getAllReservation, getReservationById, updateReservation, deleteReservation } from "../services/reservation.js";
+import { validateCatwayId } from '../middlewares/validateAccess.js';
+import { validateReservationId } from '../middlewares/validateAccess.js';
+import { addReservation, getAllReservation, getReservationById, updateReservation, deleteReservation } from '../services/reservation.js';
 
-const router = express.Router({mergeParams: true});
+const router = express.Router({ mergeParams: true });
 
 router.use(checkJWT);
 router.use(validateCatwayId);
@@ -21,7 +21,7 @@ router.use(validateCatwayId);
  * @throws {401} Token required/revoked/invalid
  * @throws {404} No reservations were found
  */
-router.get("/", getAllReservation);
+router.get('/', getAllReservation);
 
 /**
  * @route GET /catways/:id/reservations/:idReservation
@@ -34,13 +34,13 @@ router.get("/", getAllReservation);
  * @throws {401} Token required/revoked/invalid
  * @throws {404} Reservation not found
  */
-router.get("/:idReservation", validateReservationId, getReservationById);
+router.get('/:idReservation', validateReservationId, getReservationById);
 
 /**
  * @route POST /catways/:id/reservations
  * @description Create a reservation for a specified catway
  * @access Private (JWT)
- * @param {Object} body - Request body 
+ * @param {Object} body - Request body
  * @param {string} body.clientName - Client name onto the reservation (required)
  * @param {string} body.boatName - Client boat's name (required)
  * @param {string} body.startDate - Reservation starting date (required)
@@ -65,7 +65,7 @@ router.get("/:idReservation", validateReservationId, getReservationById);
  * @throws {500} Validation's layout missing or invalid
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  */
-router.post("/", inputsValidation('reservations', 'add'), dateValidation, addReservation);
+router.post('/', inputsValidation('reservations', 'add'), dateValidation, addReservation);
 
 /**
  * @route PUT /catways/:id/reservations
@@ -92,7 +92,7 @@ router.post("/", inputsValidation('reservations', 'add'), dateValidation, addRes
  * @throws {500} Validation's layout missing or invalid
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  */
-router.put("/", inputsValidation('reservations', 'update'), dateValidation, updateReservation);
+router.put('/', inputsValidation('reservations', 'update'), dateValidation, updateReservation);
 
 /**
  * @route DELETE /catways/:id/reservations/:idReservation
@@ -105,6 +105,6 @@ router.put("/", inputsValidation('reservations', 'update'), dateValidation, upda
  * @throws {401} Token required/revoked/invalid
  * @throws {404} Reservation not found
  */
-router.delete("/:idReservation", validateReservationId, deleteReservation);
+router.delete('/:idReservation', validateReservationId, deleteReservation);
 
 export default router;

@@ -4,10 +4,10 @@ import Catways from '../models/catways.js';
 
 /**
  * Catway validation access by ID middleware
- * 
+ *
  * Middleware that validates catway ID in params and  retrieves
  * the catway number. Stores the catway number on req.catwayNumber for later middlewares.
- * 
+ *
  * @async
  * @function validateCatwayId
  * @param {import('express').Request} req - Request object - Params: 'id'
@@ -17,39 +17,39 @@ import Catways from '../models/catways.js';
  * @throws {400} Catway ID is required
  * @throws {400} Catway not found
  * @see ../utils/asyncHandler.js
- * @see ../models/catways.js 
+ * @see ../models/catways.js
  */
 export const validateCatwayId = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  
-  if (!id){
+
+  if (!id) {
     return res.status(400).json({
-      message:'catway ID is required'
-    })
+      message: 'Catway ID is required',
+    });
   }
 
   const catway = await Catways.findById(id);
 
-  if (!catway){
+  if (!catway) {
     return res.status(400).json({
-      message: 'Catway not found.'
-    })
+      message: 'Catway not found.',
+    });
   }
-  
+
   const catwayNumber = catway.number;
-  
+
   req.catwayNumber = catwayNumber;
-  
+
   return next();
 });
 
 /**
  * Reservation validation access middleware
- * 
+ *
  * Middleware that retrieves a reservation (if idReservation provided) and verifies it
  * belongs to the current catway (catwayNumber stored previously on req). Stores the reservation document
  * on req.reservation.
- * 
+ *
  * @async
  * @function validateReservationId
  * @param {import('express').Request} req - Request object - (requires req.catwayNumber set by validateCatwayId)
@@ -64,7 +64,7 @@ export const validateCatwayId = asyncHandler(async (req, res, next) => {
 export const validateReservationId = asyncHandler(async (req, res, next) => {
   const catwayNumber = req.catwayNumber;
   const idReservation = req.params.idReservation || req.body.idReservation;
-  
+
   if (!idReservation) {
     return next();
   }
@@ -84,7 +84,6 @@ export const validateReservationId = asyncHandler(async (req, res, next) => {
   }
 
   req.reservation = reservationId;
-  
+
   return next();
 });
-

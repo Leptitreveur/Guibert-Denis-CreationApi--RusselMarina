@@ -6,9 +6,28 @@ This project is a comprehensive marina management system that allows users to ma
 
 ## Features
 
+### Token Management
+
+API uses **JWT (JSON Web Tokens)** to authenticate
+
+**Secure HTTP-only cookies** (recommended)
+- Token is automatically stored in a secure HTTP-only cookie named `token` upon login
+- Cookie security configuration:
+  - `secure: true` - HTTPS transmission only
+  - `httpOnly: true` - Prevents frontend Javascript access
+  - `sameSite: 'strict'` - Protection against CSRF attacks
+  - Lifetime: 24 hours
+
+### Security Functionalities
+- **Automatic renew**: Token is automatically renewed on every authenticated request and updated in the cookie
+- **Token blacklist**: Revoked tokens upon logout are stored in the blackListedToken list
+- **Secure Logout**: Cookies are automatically deleted on logout
+
 ### User Management
 
 - **Authentication System**: Secure login/signup with JWT tokens
+- **Cookie-based Authentication**: JWT tokens stored in secure HTTP-only cookies for enhanced security
+- **Token Management**: Automatic token renewal on each request, stored in secure cookies
 - **Role-based Access Control**: Different permissions for admin and regular users
 - **User Profile Management**: Users can create, update, and delete their accounts
 
@@ -38,7 +57,7 @@ This project is a comprehensive marina management system that allows users to ma
   - _Create a catway_ 
   - _List all catways_ 
   - _Get a chosen catway_ 
-  - _Update catways status_ 
+  - _Update catway status_ 
   - _Delete a catway_
 
 ### Reservations page
@@ -68,8 +87,8 @@ This project is a comprehensive marina management system that allows users to ma
 ### Dashboard page
 
 - **Navigation** - navigate to the previous page
-- **Connection** - Sign in to the user account
-- **Disconnect** - Disconnect from the user account
+- **Connection** - Sign in to the user account (token stored in secure cookie)
+- **Disconnect** - Disconnect from the user account (cookie deleted and token revoked)
 - **API documentation** - link to the API documentation
 - **Users info** - fullname and email of the connected user
 - **Current Date and time** - display current date and time
@@ -81,12 +100,13 @@ This project is a comprehensive marina management system that allows users to ma
 
 ### Backend
 
-- **Node.js** - JavaScript runtime environment
+- **Node.js** - Javascript runtime environment
 - **Express.js** - Web application framework for Node.js
 - **MongoDB** - NoSQL database for data storage
 - **Mongoose** - MongoDB object modeling for Node.js
 - **JWT (JSON Web Tokens)** - Authentication and authorization
 - **bcrypt** - Password hashing and encryption
+- **cookie-parser** - Cookie parsing middleware for secure token storage
 - **CORS** - Cross-Origin Resource Sharing
 - **Express Session** - Session management
 
@@ -222,40 +242,61 @@ pnpm install
 
 ### Phase 3: Environment Configuration
 
-Create environment files in the root directory. **Important**: These files contain sensitive information and should never be committed to version control.
-Create two files:
+Create environment files in the root directory. 
 
-- **`.env.development`** - For development environment
-- **`.env.production`** - For production environment
+**Important**: These files contain sensitive information and should never be committed to version control.
+
+Create three files:
+
+- **`.env`** - Default environment file
+- **`.env.dev`** - For development environment
+- **`.env.prod`** - For production environment
 
 Each file should contain the following variables (replace the placeholder values with your actual configuration):
+
 # Database Configuration
 MONGODB_URI=your_mongodb_connection_string
 
 # JWT Configuration
-JWT_SECRET=your_secret_key_here
-JWT_EXPIRES_IN=your_expiration_time
+SECRET_KEY=your_secret_key_here
 
 # Server Configuration
-PORT=your_port_number
 NODE_ENV=development # or 'production' for production file
+HTTPS_PORT=your_port_number # e.g., 3443 or 3000
+
+# SSL/TLS Certificate Paths
+SSL_KEY_PATH=path/to/private-key.pem
+SSL_CERT_PATH=path/to/certificate.pem
+
+# Application Configuration
+APP_NAME=your_application_name
+API_URL=your_api_url
 
 # CORS Configuration
-CORS_ORIGIN=your_cors_origin
+CORS_ORIGIN=your_cors_origin # Frontend origin URL
 
 **Security Note**: 
 - Never commit `.env` files to Git
-- Use strong, unique values for `JWT_SECRET` and `MONGODB_URI`
+- Use strong, unique values for `SECRET_KEY` and `MONGODB_URI`
 - Keep your environment files secure and private
 
 ### Phase 4: SSL/TLS Certificates Setup
 
-For HTTPS to work, you need to generate SSL/TLS certificates. See `certificates/Readme.md` for detailed instructions.
+### Phase 4: SSL/TLS Certificates Setup
+
+For HTTPS to work, you need to generate SSL/TLS certificates. 
+See `certificates/Readme.md` for detailed instructions.
 
 **Quick setup (with OpenSSL):**
 
 cd certificates
 openssl req -x509 -newkey rsa:4096 -nodes -keyout private-key.pem -out certificate.pem -days 365
+
+**Note**: By default, the application looks for certificates in the `certificates/` directory.
+You can specify custom paths using `SSL_KEY_PATH` and `SSL_CERT_PATH` in your `.env` files.
+If these variables are not set, the application will use the default paths:
+- `certificates/private-key.pem`
+- `certificates/certificate.pem`
 
 ### Phase 5: Database Setup
 
@@ -293,7 +334,7 @@ npm start
 
 ### Phase 8: Access the Application
 
-- **Local URL**: `https://localhost:3000` (or the port specified in your `.env` file)
+- **Local URL**: `https://localhost:3443` (or the port specified in `HTTPS_PORT` in your `.env` file)
 - **API Documentation**: `https://localhost:3000/api-docs` (if Swagger/OpenAPI is configured)
 
 ## Available Scripts
@@ -313,7 +354,13 @@ npm start
 ### Authentication
 
 - `POST /login` - User login
+  - **Body**: `email`, `password`
+  - **Response**: JWT Token stored in a secure HTTP-only cookie named `token`
+  - **Note**: Token is only stored in cookie, not sent in response headers
+
 - `POST /logout` - User logout
+  - **Token required via**: Cookie `token` (automatically sent by browser)
+  - **Action**: Revokes tokens and deletes cookie
 
 ### Users (Admin Only)
 

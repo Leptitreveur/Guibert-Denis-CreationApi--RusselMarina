@@ -2,7 +2,7 @@
 
 /**
  * Server entry point
- * 
+ *
  * Initializes and starts the HTTPS server with SSL/TLS certificates.
  * Handles port normalization, error handling, and server listening events.
  */
@@ -10,12 +10,12 @@
 /**
  * Module dependencies
  */
-import app from "../app.js";
-import debug from "debug";
-import https from "https";
+import app from '../app.js';
+import debug from 'debug';
+import https from 'https';
 import fs from 'fs';
-import path from "path";
-import { fileURLToPath } from "url";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,27 +24,31 @@ const debugLog = debug('guibert-denis-creationapi--russelmarina:server');
 
 /**
  * Normalize and configure server port
- * 
- * Gets port from environment variable PORT or defaults to '3443'.
+ *
+ * Gets port from environment variable HTTPS_PORT or defaults to '3443'.
  * Sets the port in Express application.
  */
-const port = normalizePort(process.env.PORT || '3443');
+const port = normalizePort(process.env.HTTPS_PORT || '3443');
 app.set('port', port);
 
 /**
  * SSL/TLS certificate configuration
- * 
- * Loads private key and certificate files from the certificates directory
- * to enable HTTPS connections.
+ *
+ * Loads private key and certificate files from paths specified in environment variables
+ * (SSL_KEY_PATH and SSL_CERT_PATH) or defaults to certificates directory.
+ * This enables HTTPS connections.
  */
+const sslKeyPath = process.env.SSL_KEY_PATH || path.join(__dirname, '../certificates/private-key.pem');
+const sslCertPath = process.env.SSL_CERT_PATH || path.join(__dirname, '../certificates/certificate.pem');
+
 const options = {
- key: fs.readFileSync(path.join(__dirname, '../certificates/private-key.pem')),
- cert: fs.readFileSync(path.join(__dirname, '../certificates/certificate.pem'))
+  key: fs.readFileSync(sslKeyPath),
+  cert: fs.readFileSync(sslCertPath),
 };
 
 /**
  * Create HTTPS server
- * 
+ *
  * Creates an HTTPS server instance with SSL/TLS certificates and Express app.
  */
 
@@ -52,8 +56,8 @@ const server = https.createServer(options, app);
 
 /**
  * Start server and attach event listeners
- * 
- * Starts listening on the configuerd port and attaches error and listening event handlers.
+ *
+ * Starts listening on the configured port and attaches error and listening event handlers.
  */
 server.listen(port);
 server.on('error', onError);
@@ -61,10 +65,10 @@ server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
- * 
+ *
  * Converts a port value (string or number) to a valid port number.
  * Returns the original value if it's a named pipe, or false if invalid.
- * 
+ *
  * @function normalizePort
  * @param {string|number} val - Port value to normalize
  * @returns {number|string|false} Normalized port number, named pipe string, or false if invalid
@@ -87,7 +91,7 @@ function normalizePort(val) {
 
 /**
  * Event listener for HTTPS server "error" event.
- * 
+ *
  * @function onError
  * @param {Error} error - Error object from the server
  * @throws {Error} Re-throws error if it's not a listen error
@@ -97,9 +101,7 @@ function onError(error) {
     throw error;
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   switch (error.code) {
     case 'EACCES':
@@ -117,14 +119,12 @@ function onError(error) {
 
 /**
  * Event listener for HTTPS server "listening" event.
- * 
+ *
  * Logs the server address and port when the server starts listening.
  * Uses debug logging for development purposes.
  */
 function onListening() {
   const addr = server.address();
-  const bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debugLog('Listening on ' + bind);
 }

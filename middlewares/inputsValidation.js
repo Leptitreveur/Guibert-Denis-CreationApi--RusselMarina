@@ -2,10 +2,10 @@ import { sequentialPatterns, rulesByLayout, requiredFields, usableFields } from 
 
 /**
  * Flatten sequential patterns function
- * 
+ *
  * Convert the sequential patterns object into an array ready to use.
- * 
- * @returns {Array<string>} Array of sequential patterns 
+ *
+ * @returns {Array<string>} Array of sequential patterns
  * @see ../data/inputsValidationData.js For complete documentation
  */
 function flattenSequentialPatterns() {
@@ -24,12 +24,12 @@ function flattenSequentialPatterns() {
 
 /**
  * Check required fields presence function
- * 
- * Returns a middleware that checks the request body data to verify the presence 
+ *
+ * Returns a middleware that checks the request body data to verify the presence
  * of required or allowed fields regarding the layout and service being used.
- * 
- * @param {Object} bodydata - Requested body data (keys) 
- * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login') 
+ *
+ * @param {Object} bodydata - Requested body data (keys)
+ * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login')
  * @param {string} service - Selected service passed on by inputsValidation middleware (required, must be 'add', 'update', 'login')
  * @returns {Function} Express middleware function that validates required/allowed fields
  * @throws {400} Empty request
@@ -83,10 +83,10 @@ function containsRequiredFields(bodydata, layout, service) {
 
 /**
  * Check rules application function
- * 
- * Returns a middleware function that checks that the request body data respect regex rules 
+ *
+ * Returns a middleware function that checks that the request body data respect regex rules
  * regarding the layout being used.
- * 
+ *
  * @param {Object} bodydata - Requested body data (required)
  * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login')
  * @returns {Function} Express middleware function that validates field rules
@@ -117,10 +117,10 @@ function respectRules(bodydata, layout) {
 }
 /**
  * Check sequential patterns presence function
- * 
+ *
  * Returns a middleware function that checks that the password does not contain any sequential patterns
  * from flattenSequentialPatterns array regarding layout and service being used.
- * 
+ *
  * @param {string} candidate - Password passed on by inputsValidation middleware for validation (required)
  * @param {string} layout - Selected layout passed on by inputsValidation middleware (required, must be 'users', 'reservations', 'catways' , 'login')
  * @param {string} service - Selected service passed on by inputsValidation middleware (required, must be 'add', 'update', 'login')
@@ -150,13 +150,13 @@ function containsSequentialPatterns(candidate, layout, service) {
 }
 /**
  * Inputs validation middleware
- * 
+ *
  * Returns a middleware function that applies all the validation process functions
  * to users's inputs (in the request body) regarding the layout (sub-route) and service being used.
  * Verifies the presence of layout parameter (and its type), rulesByLayout and
  * requiredFields before starting the validation process.
- *  
- * @param {string} layout - Selected sub-route being used (required, must be 'users', 'reservations', 'catways', 'login') 
+ *
+ * @param {string} layout - Selected sub-route being used (required, must be 'users', 'reservations', 'catways', 'login')
  * @param {string} service - Selected service being used (required, must be 'add', 'update', 'login')
  * @returns {Function} Express middleware function that validates request body inputs
  * @throws {500} Validation's layout missing or invalid

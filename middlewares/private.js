@@ -4,34 +4,33 @@ import BlackListedToken from '../models/blackListedToken.js';
 
 /**
  * Load SECRET_KEY
- * 
+ *
  * Loads SECRET_KEY from environment variables
  */
 const SECRET_KEY = process.env.SECRET_KEY;
 
-
 /**
  * Check JWT validity
- * 
+ *
  * Represents a middleware function that validates the access to the API by verifying a valid JWT token.
  * Tokens expire after 24 hours and are automatically renewed on each request.
  * Checks that the token is not in the current blacklisted token list.
- * 
+ *
  * @async
  * @function checkJWT
- * @param {import('express').Request} req - Request object - Headers: 'x-access-token' or 'authorization' (with 'Bearer ' prefix, required)
+ * @param {import('express').Request} req - Request object - Token must be provided via: Cookie `token`.
  * @param {import('express').Response} res - Response object
  * @param {import('express').NextFunction} next - Express next middleware function
- * @returns {Promise<void>} Calls next() middleware function if validation succeeds, sets req.decoded and renews token in Authorization header
+ * @returns {Promise<void>} Calls next() middleware function if validation succeeds, sets req.decoded and renews token in token cookie
  * @throws {401} token required/revoked/invalid
  * @see ../utils/asyncHandler.js
  * @see ../models/blackListedToken.js
  */
 const checkJWT = asyncHandler(async (req, res, next) => {
-  let token = req.headers['x-access-token'] || req.headers['authorization'];
+  let token = req.cookies['token'];
 
-  if (token && token.startsWith('bearer ')) {
-    token = token.slice(7, token.length);
+  if (token) {
+    token = token.replace(/^bearer\s+/i, '');
   }
 
   if (!token) {
@@ -50,7 +49,6 @@ const checkJWT = asyncHandler(async (req, res, next) => {
     if (err) {
       return res.status(401).json({
         message: 'Invalid token',
-        data: token,
       });
     }
     req.decoded = decoded;
@@ -64,7 +62,13 @@ const checkJWT = asyncHandler(async (req, res, next) => {
       }
     );
 
-    res.header('Authorization', 'Bearer ' + newToken);
+    res.cookie('token', newToken, {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     next();
   });
 });

@@ -21,7 +21,7 @@ import Reservation from '../models/reservation.js';
  * @throws {400} Start and end dates must be ISO strings (YYYY-MM-DD)
  * @throws {400} Invalid date format
  * @throws {400} Start reservation date must occur before end's reservation date
- * @throws {400} Start reservation date must occur on or after end reservation date
+ * @throws {400} Start reservation date must occur on or after today's date
  * @throws {404} Reservation not found
  * @see ../utils/dateFormatter.js For date formatting utilities
  * @see ../models/reservation.js For reservation model
@@ -74,7 +74,7 @@ async function dateValidation(req, res, next) {
 
   if (start.getTime() > end.getTime()) {
     return res.status(400).json({
-      message: "Start reservation date must occur before end's reservation date.",
+      message: `Start reservation date must occur before end's reservation date.`,
     });
   }
 
@@ -82,7 +82,7 @@ async function dateValidation(req, res, next) {
 
   if (start.getTime() < todayUTC.getTime()) {
     return res.status(400).json({
-      message: 'Start reservation date must occur on or after end reservation date.',
+      message: `Start reservation date must occur on or after today's date.`,
     });
   }
 
