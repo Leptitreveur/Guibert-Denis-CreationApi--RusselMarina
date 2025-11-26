@@ -6,9 +6,28 @@ This project is a comprehensive marina management system that allows users to ma
 
 ## Features
 
+### Token Management
+
+API uses **JWT (JSON Web Tokens)** to authenticate
+
+**Secure HTTP-only cookies** (recommended)
+- Token is automatically stored in a secure HTTP-only cookie named `token` upon login
+- Cookie security configuration:
+  - `secure: true` - HTTPS transmission only
+  - `httpOnly: true` - Prevents frontend Javascript access
+  - `sameSite: 'strict'` - Protection against CSRF attacks
+  - Lifetime: 24 hours
+
+### Security Functionalities
+- **Automatic renew**: Token is automatically renewed on every authenticated request and updated in the cookie
+- **Token blacklist**: Revoked tokens upon logout are stored in the blackListedToken list
+- **Secure Logout**: Cookies are automatically deleted on logout
+
 ### User Management
 
 - **Authentication System**: Secure login/signup with JWT tokens
+- **Cookie-based Authentication**: JWT tokens stored in secure HTTP-only cookies for enhanced security
+- **Token Management**: Automatic token renewal on each request, stored in secure cookies
 - **Role-based Access Control**: Different permissions for admin and regular users
 - **User Profile Management**: Users can create, update, and delete their accounts
 
@@ -24,21 +43,31 @@ This project is a comprehensive marina management system that allows users to ma
 - **Availability Checking**: Real-time availability status
 - **Reservation History**: Track past and current reservations
 
-## Functionnality
+## Functionality
 
 ### Home page
 
 - **Presentation** - a short presentation of the application
 - **Sign in / Login** - a form to sign in or login
-- **Api documentation** - a link to the API documentation (generated with Jsdoc)
+- **API documentation** - a link to the API documentation (generated with JSDoc)
 
 ### Catways page
 
-**Admin** - should be able to : - _Create a catways_ - _List all catways_ - _Get a chosen catways_ - _Update catways status_ - _Delete a catways / many catways_
+**Admin** - should be able to : 
+  - _Create a catway_ 
+  - _List all catways_ 
+  - _Get a chosen catway_ 
+  - _Update catway status_ 
+  - _Delete a catway_
 
 ### Reservations page
 
-**Admin** - should be able to : - _Create a reservation_ - _List all reservations_ - _Get a chosen reservation_ - _Update a chosen reservation_ - _Delete a reservation / many reservations_
+**Admin** - should be able to : 
+  - _Create a reservation_ 
+  - _List all reservations_ 
+  - _Get a chosen reservation_ 
+  - _Update a chosen reservation_ 
+  - _Delete a reservation_
 
 ### Users page
 
@@ -52,14 +81,14 @@ This project is a comprehensive marina management system that allows users to ma
 
 - **User** - should be able to :
   - _Create an account_
-  - _Update his account_
-  - _Delete his account_
+  - _Update their account_
+  - _Delete their account_
 
 ### Dashboard page
 
 - **Navigation** - navigate to the previous page
-- **Connection** - Sign in to the user account
-- **Disconnect** - Disconnect from the user account
+- **Connection** - Sign in to the user account (token stored in secure cookie)
+- **Disconnect** - Disconnect from the user account (cookie deleted and token revoked)
 - **API documentation** - link to the API documentation
 - **Users info** - fullname and email of the connected user
 - **Current Date and time** - display current date and time
@@ -71,12 +100,13 @@ This project is a comprehensive marina management system that allows users to ma
 
 ### Backend
 
-- **Node.js** - JavaScript runtime environment
+- **Node.js** - Javascript runtime environment
 - **Express.js** - Web application framework for Node.js
 - **MongoDB** - NoSQL database for data storage
 - **Mongoose** - MongoDB object modeling for Node.js
 - **JWT (JSON Web Tokens)** - Authentication and authorization
 - **bcrypt** - Password hashing and encryption
+- **cookie-parser** - Cookie parsing middleware for secure token storage
 - **CORS** - Cross-Origin Resource Sharing
 - **Express Session** - Session management
 
@@ -94,28 +124,61 @@ This project is a comprehensive marina management system that allows users to ma
 
 ## Project Structure
 
-```
 Guibert-Denis-CreationApi--RusselMarina/
 ├── bin/
-│   └── www                 # Application startup script
-├── node_modules/           # Dependencies (auto-generated)
-├── public/                 # Static assets
-│   ├── images/            # Image files
-│   ├── javascripts/       # Client-side JavaScript
-│   └── stylesheets/       # CSS files
-│       └── style.css      # Main stylesheet
-├── routes/                 # API route handlers
-│   ├── index.js           # Home page routes
-│   └── users.js           # User management routes
-├── views/                  # Server-side templates
-│   ├── error.ejs          # Error page template
-│   ├── index.ejs          # Home page template
-│   └── layout.ejs         # Base layout template
-├── app.js                  # Main application file
-├── package.json           # Project configuration and dependencies
-├── package-lock.json      # Dependency lock file
-└── README.md              # Project documentation
-```
+│ └── www # Application startup script
+├── certificates/ # SSL/TLS certificates for HTTPS
+│ └── Readme.md # Certificate setup instructions
+├── data/ # Validation data and configuration
+│ └── inputsValidationData.js
+├── db/ # Database connection
+│ └── mongo.js # MongoDB connection setup
+├── env/ # Environment variables (not in git)
+├── middlewares/ # Express middlewares
+│ ├── dateValidation.js
+│ ├── inputsValidation.js
+│ ├── paramsValidation.js
+│ ├── private.js
+│ └── validateAccess.js
+├── models/ # Mongoose schemas and models
+│ ├── blackListedToken.js
+│ ├── catways.js
+│ ├── reservation.js
+│ └── users.js
+├── node_modules/ # Dependencies (auto-generated)
+├── public/ # Static assets
+│ └── stylesheets/ # CSS files
+│ └── style.css # Main stylesheet
+├── routes/ # API route handlers
+│ ├── index.js # Home page routes
+│ ├── users.js # User management routes
+│ ├── catways.js # Catway management routes
+│ ├── reservations.js # Reservation management routes
+│ ├── login.js # Authentication routes
+│ ├── logout.js # Logout routes
+│ └── dashboard.js # Dashboard routes
+├── services/ # Business logic layer
+│ ├── authentification.js
+│ ├── users.js
+│ ├── catways.js
+│ ├── reservation.js
+│ ├── logout.js
+│ └── dashboard.js
+├── utils/ # Utility functions
+│ ├── asyncHandler.js
+│ ├── dateCalculator.js
+│ ├── dateFormatter.js
+│ ├── periodValidator.js
+│ └── serverShutdown.js
+├── views/ # Server-side templates
+│ ├── error.ejs # Error page template
+│ └── index.ejs # Home page template
+├── app.js # Main application file
+├── jsconfig.json # JavaScript configuration
+├── package.json # Project configuration and dependencies
+├── package-lock.json # Dependency lock file
+└── README.md # Project documentation
+
 
 ## Setup and Launch
 
@@ -146,174 +209,120 @@ Before you start, make sure the following tools are installed and up to date:
 
 ## Installation Process
 
-### Phase 1: Project Initialization
+### Phase 1: Clone the Repository
 
-**1. Install Express Generator globally**
+**Option A : Clonage HTTPS (recommandé)**
 
-```bash
-npm install -g express-generator
-```
+git clone https://github.com/Leptitreveur/Guibert-Denis-CreationApi--RusselMarina.git
+cd Guibert-Denis-CreationApi--RusselMarina
 
-**2. Navigate to your project directory**
+**Option B : Clonage SSH (si configuré)**
 
-```bash
-cd "C:\Users\guibe\Desktop\Formation_DevWeb_CEF\Devoir\Guibert-Denis-CreationApi--RusselMarina"
-```
+git clone git@github.com:Leptitreveur/Guibert-Denis-CreationApi--RusselMarina.git
+cd Guibert-Denis-CreationApi--RusselMarina
 
-**3. Generate Express structure in current directory**
+**Option C : GitHub CLI**
 
-```bash
-express --view=ejs .
-```
+gh repo clone Leptitreveur/Guibert-Denis-CreationApi--RusselMarina
+cd Guibert-Denis-CreationApi--RusselMarina
 
-### Phase 2: Core Dependencies
+### Phase 2: Install Dependencies
 
-**4. Install Express (main framework)**
+**Avec npm (recommandé)**
 
-```bash
-npm install express
-```
+npm install
 
-**5. Install Mongoose (MongoDB integration)**
+**Avec yarn**
 
-```bash
-npm install mongoose
-```
+yarn install
 
-**6. Install CORS (cross-origin requests)**
+**Avec pnpm**
 
-```bash
-npm install cors
-```
+pnpm install
 
-### Phase 3: Authentication & Security
+### Phase 3: Environment Configuration
 
-**7. Install bcrypt (password encryption)**
+Create environment files in the root directory. 
 
-```bash
-npm install bcrypt
-```
+**Important**: These files contain sensitive information and should never be committed to version control.
 
-**8. Install JWT (authentication tokens)**
+Create three files:
 
-```bash
-npm install jsonwebtoken
-```
+- **`.env`** - Default environment file
+- **`.env.dev`** - For development environment
+- **`.env.prod`** - For production environment
 
-**9. Install Express Session (session management)**
+Each file should contain the following variables (replace the placeholder values with your actual configuration):
 
-```bash
-npm install express-session
-```
-
-### Phase 4: Development Tools
-
-**10. Install Nodemon (auto-restart development server)**
-
-```bash
-npm install --save-dev nodemon
-```
-
-**11. Install env-cmd (environment variable management)**
-
-```bash
-npm install --save-dev env-cmd
-```
-
-**12. Install JSDoc (API documentation)**
-
-```bash
-npm install --save-dev jsdoc
-```
-
-### Phase 5: Template Engine
-
-**13. Install EJS (template engine)**
-
-```bash
-npm install ejs
-```
-
-### Environment Configuration
-
-Create environment files in the root directory:
-
-**.env.development**
-
-```bash
 # Database Configuration
-MONGODB_URI=
+MONGODB_URI=your_mongodb_connection_string
 
 # JWT Configuration
-JWT_SECRET=
-JWT_EXPIRES_IN=
+SECRET_KEY=your_secret_key_here
 
 # Server Configuration
-PORT=
-NODE_ENV=
+NODE_ENV=development # or 'production' for production file
+HTTPS_PORT=your_port_number # e.g., 3443 or 3000
+
+# SSL/TLS Certificate Paths
+SSL_KEY_PATH=path/to/private-key.pem
+SSL_CERT_PATH=path/to/certificate.pem
+
+# Application Configuration
+APP_NAME=your_application_name
+API_URL=your_api_url
 
 # CORS Configuration
-CORS_ORIGIN=
-```
+CORS_ORIGIN=your_cors_origin # Frontend origin URL
 
-**.env.production**
+**Security Note**: 
+- Never commit `.env` files to Git
+- Use strong, unique values for `SECRET_KEY` and `MONGODB_URI`
+- Keep your environment files secure and private
 
-```bash
-# Database Configuration
-MONGODB_URI=
+### Phase 4: SSL/TLS Certificates Setup
 
-# JWT Configuration
-JWT_SECRET=
-JWT_EXPIRES_IN=
+### Phase 4: SSL/TLS Certificates Setup
 
-# Server Configuration
-PORT=
-NODE_ENV=
+For HTTPS to work, you need to generate SSL/TLS certificates. 
+See `certificates/Readme.md` for detailed instructions.
 
-# CORS Configuration
-CORS_ORIGIN=
-```
+**Quick setup (with OpenSSL):**
 
-### 4. Database Setup
+cd certificates
+openssl req -x509 -newkey rsa:4096 -nodes -keyout private-key.pem -out certificate.pem -days 365
+
+**Note**: By default, the application looks for certificates in the `certificates/` directory.
+You can specify custom paths using `SSL_KEY_PATH` and `SSL_CERT_PATH` in your `.env` files.
+If these variables are not set, the application will use the default paths:
+- `certificates/private-key.pem`
+- `certificates/certificate.pem`
+
+### Phase 5: Database Setup
 
 **For Local MongoDB:**
 
-```bash
 # Start MongoDB service (if not already running)
+
 # On Windows:
 net start MongoDB
+
 # On macOS:
 brew services start mongodb-community
+
 # On Linux:
 sudo systemctl start mongod
-```
 
-### 5. Verify Installation
+### Phase 6: Verify Installation
 
-```bash
 # Verify that all dependencies are installed
 npm list --depth=0
 
 # Check if the application starts without errors
 npm start
-```
 
-### 6. Configure Package.json Scripts
+### Phase 7: Launch the Application
 
-Add the following scripts to your `package.json`:
-
-```json
-"scripts": {
-  "start": "node ./bin/www",
-  "dev": "env-cmd -f .env.development nodemon ./bin/www",
-  "prod": "env-cmd -f .env.production node ./bin/www",
-  "docs": "jsdoc -c jsdoc.conf.json"
-}
-```
-
-### 7. Launch the Application
-
-```bash
 # Start the server in development mode (with env-cmd and nodemon)
 npm run dev
 
@@ -322,12 +331,11 @@ npm run prod
 
 # Start the server in production mode (standard)
 npm start
-```
 
-### 8. Access the Application
+### Phase 8: Access the Application
 
-- **Local URL**: `http://localhost:3000` (or the port specified in your `.env` file)
-- **API Documentation**: `http://localhost:3000/api-docs` (if Swagger/OpenAPI is configured)
+- **Local URL**: `https://localhost:3443` (or the port specified in `HTTPS_PORT` in your `.env` file)
+- **API Documentation**: `https://localhost:3000/api-docs` (if Swagger/OpenAPI is configured)
 
 ## Available Scripts
 
@@ -346,13 +354,19 @@ npm start
 ### Authentication
 
 - `POST /login` - User login
-- `GET /logout` - User logout
+  - **Body**: `email`, `password`
+  - **Response**: JWT Token stored in a secure HTTP-only cookie named `token`
+  - **Note**: Token is only stored in cookie, not sent in response headers
+
+- `POST /logout` - User logout
+  - **Token required via**: Cookie `token` (automatically sent by browser)
+  - **Action**: Revokes tokens and deletes cookie
 
 ### Users (Admin Only)
 
 - `GET /users` - Get all users
 - `GET /users/:email` - Get user by Email
-- `POST /users/` - Create a user
+- `POST /users` - Create a user
 - `PUT /users/:email` - Update user
 - `DELETE /users/:email` - Delete user
 
@@ -367,10 +381,10 @@ npm start
 ### Reservations
 
 - `GET /catways/:id/reservations` - Get all reservations
-- `GET /catways/:id/reservations/:id` - Get reservation by ID
+- `GET /catways/:id/reservations/:idReservation` - Get reservation by ID
 - `POST /catways/:id/reservations` - Create new reservation
-- `PUT /catways/:id/reservations/:id` - Update reservation
-- `DELETE /catways/:id/reservations/:id` - Cancel reservation
+- `PUT /catways/:id/reservations/:idReservation` - Update reservation
+- `DELETE /catways/:id/reservations/:idReservation` - Cancel reservation
 
 ## Contributing
 
@@ -382,4 +396,4 @@ npm start
 
 ## License
 
-\*\*Free License
+**Free License**
