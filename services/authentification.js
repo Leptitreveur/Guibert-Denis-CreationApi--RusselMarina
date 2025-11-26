@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import asyncHandler from "../utils/asyncHandler.js";
-import Users from "../models/users.js";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import asyncHandler from '../utils/asyncHandler.js';
+import Users from '../models/users.js';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -22,24 +22,24 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const authentificate = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  let user = await Users.findOne({ email }).select("+password");
+  let user = await Users.findOne({ email }).select('+password');
 
   if (!user) {
     return res.status(404).json({
-        message: "User not found",
+      message: 'User not found',
     });
   }
 
   if (!user.password) {
     return res.status(500).json({
-      message: "User password not found in database.",
-      data: user
+      message: 'User password not found in database.',
+      data: user,
     });
   }
 
   if (typeof password !== 'string' || typeof user.password !== 'string') {
     return res.status(400).json({
-      message: "Invalid password format.",
+      message: 'Invalid password format.',
     });
   }
 
@@ -48,28 +48,29 @@ const authentificate = asyncHandler(async (req, res) => {
   if (isMatch) {
     delete user._doc.password;
 
-    const token = jwt.sign({ 
-      user: user 
-      }, 
-          SECRET_KEY, 
+    const token = jwt.sign(
       {
-          expiresIn: "24h",
-    });
+        user: user,
+      },
+      SECRET_KEY,
+      {
+        expiresIn: '24h',
+      }
+    );
 
-    res.header("Authorization", "Bearer " + token);
-    
+    res.header('Authorization', 'Bearer ' + token);
+
     return res.status(200).json({
-        message: "Authentificate succeded",
-        login: true
-      });
+      message: 'Authentificate succeded',
+      login: true,
+    });
   }
 
   return res.status(403).json({
-    message: "authentication failed.",
+    message: 'authentication failed.',
     login: false,
-    data: user.password
+    data: user.password,
   });
-
 });
 
 export default authentificate;

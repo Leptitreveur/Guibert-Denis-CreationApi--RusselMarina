@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 /**
  * MongoDB client connection options configurations
@@ -7,7 +7,7 @@ import mongoose from "mongoose";
  */
 const clientOptions = {
   serverApi: {
-    version: "1",
+    version: '1',
     strict: true,
     deprecationErrors: true,
   },
@@ -22,16 +22,16 @@ const clientOptions = {
  * @throws {Error} Throws error if connection fails
  */
 export async function DbConnection() {
-  mongoose.connection.on("error", (err) => {
-    console.error("MongoDB Connection error : ", err);
+  mongoose.connection.on('error', (err) => {
+    console.error('MongoDB Connection error : ', err);
   });
 
   try {
     await mongoose.connect(process.env.MONGODB_URI, clientOptions);
     await mongoose.connection.db.admin().command({ ping: 1 });
-    console.log("Pinged your deployment. Successfully connected to MongoDB.");
+    console.log('Pinged your deployment. Successfully connected to MongoDB.');
   } catch (err) {
-    console.log("Connection error : ", err);
+    console.log('Connection error : ', err);
     throw err;
   }
 }
@@ -47,9 +47,9 @@ export async function DbConnection() {
 export async function DbDisconnection() {
   try {
     await mongoose.disconnect();
-    console.log("Successfully disconnected from MongoDB");
+    console.log('Successfully disconnected from MongoDB');
   } catch (err) {
-    console.error("Failed to disconnect from MongoDB : ", err);
+    console.error('Failed to disconnect from MongoDB : ', err);
     throw err;
   }
 }

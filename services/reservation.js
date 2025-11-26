@@ -33,7 +33,7 @@ const addReservation = asyncHandler(async (req, res) => {
   if (typeof catwayNumber !== 'number') {
     return res.status(400).json({
       message: 'Catway number is missing.',
-      data: req.catwayNumber
+      data: req.catwayNumber,
     });
   }
 
@@ -97,7 +97,7 @@ const getReservationById = asyncHandler(async (req, res) => {
   if (!reservation) {
     return res.status(404).json({
       message: 'Reservation not found.',
-      data: req.params
+      data: req.params,
     });
   }
 

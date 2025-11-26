@@ -1,5 +1,5 @@
-import express from "express";
-import authentificate from "../services/authentication.js";
+import express from 'express';
+import authentificate from '../services/authentication.js';
 import inputsValidation from '../middlewares/inputsValidation.js';
 
 const router = express.Router();
@@ -21,6 +21,6 @@ const router = express.Router();
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  * @throws {500} User password not found in database
  */
-router.post("/", inputsValidation('login', 'login'), authentificate);
+router.post('/', inputsValidation('login', 'login'), authentificate);
 
 export default router;

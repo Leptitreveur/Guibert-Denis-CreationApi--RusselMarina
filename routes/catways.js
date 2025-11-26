@@ -1,8 +1,8 @@
-import express from "express";
-import checkJWT from "../middlewares/private.js";
+import express from 'express';
+import checkJWT from '../middlewares/private.js';
 import inputsValidation from '../middlewares/inputsValidation.js';
-import paramsValidataion from '../middlewares/paramsValidation.js'; 
-import { addCatway, getAllCatways, getCatwayById, updateCatway, deleteCatway } from "../services/catways.js";
+import paramsValidataion from '../middlewares/paramsValidation.js';
+import { addCatway, getAllCatways, getCatwayById, updateCatway, deleteCatway } from '../services/catways.js';
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.use(checkJWT);
  * @throws {401} Token required/revoked/invalid
  * @throws {404} No catways were found
  */
-router.get("/", getAllCatways);
+router.get('/', getAllCatways);
 
 /**
  * @route GET /catways/:id
@@ -29,7 +29,7 @@ router.get("/", getAllCatways);
  * @throws {500} Invalid ID parameter
  * @throws {500} Invalid layout parameter
  */
-router.get("/:id", paramsValidation('catways'), getCatwayById);
+router.get('/:id', paramsValidation('catways'), getCatwayById);
 
 /**
  * @route POST /catways
@@ -50,7 +50,7 @@ router.get("/:id", paramsValidation('catways'), getCatwayById);
  * @throws {500} Validation's layout missing or invalid
  * @throws {500} Service layout must be a string and have one of this values: add, update, login
  */
-router.post("/", inputsValidation('catways', 'add'), addCatway);
+router.post('/', inputsValidation('catways', 'add'), addCatway);
 
 /**
  * @route PUT /catways/:id
@@ -71,7 +71,7 @@ router.post("/", inputsValidation('catways', 'add'), addCatway);
  * @throws {500} Invalid ID parameter
  * @throws {500} Invalid layout parameter
  */
-router.put("/:id", paramsValidation('catways'), inputsValidation('catways', 'update'), updateCatway);
+router.put('/:id', paramsValidation('catways'), inputsValidation('catways', 'update'), updateCatway);
 
 /**
  * @route DELETE /catways/:id
@@ -83,7 +83,6 @@ router.put("/:id", paramsValidation('catways'), inputsValidation('catways', 'upd
  * @throws {500} Invalid ID parameter
  * @throws {500} Invalid layout parameter
  */
-router.delete("/:id", paramsValidation('catways'), deleteCatway);
-
+router.delete('/:id', paramsValidation('catways'), deleteCatway);
 
 export default router;

@@ -4,19 +4,18 @@ import BlackListedToken from '../models/blackListedToken.js';
 
 /**
  * Load SECRET_KEY
- * 
+ *
  * Loads SECRET_KEY from environment variables
  */
 const SECRET_KEY = process.env.SECRET_KEY;
 
-
 /**
  * Check JWT validity
- * 
+ *
  * Represents a middleware function that validates the access to the API by verifying a valid JWT token.
  * Tokens expire after 24 hours and are automatically renewed on each request.
  * Checks that the token is not in the current blacklisted token list.
- * 
+ *
  * @async
  * @function checkJWT
  * @param {import('express').Request} req - Request object - Headers: 'x-access-token' or 'authorization' (with 'Bearer ' prefix, required)

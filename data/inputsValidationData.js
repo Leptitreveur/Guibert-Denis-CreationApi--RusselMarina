@@ -1,8 +1,8 @@
 /**
  * Keyboard sequential patterns
- * 
+ *
  * Contains common sequential patterns on azerty, qwerty and numpad keyboard.
- * 
+ *
  * @typedef {Object} sequentialPatterns
  * @property {Object} qwerty - QWERTY keyboard patterns
  * @property {Object} azerty - AZERTY keyboard patterns
@@ -60,13 +60,13 @@ export const sequentialPatterns = {
 
 /**
  * Regex rules by layout
- * 
+ *
  * Contains all regex input rules by layout (regex flag u = unicode).
- * 
+ *
  * @typedef {Object} rulesByLayout
  * @property {Array<string>} login - Validation rules for login (includes: email, password)
  * @property {Array<string>} users - Validation rules for users (includes: name, firstname, username, email, password)
- * @property {Array<string>} reservations - Validation rules for reservations (includes: idReservation, clientName, boatName) 
+ * @property {Array<string>} reservations - Validation rules for reservations (includes: idReservation, clientName, boatName)
  * @property {Array<string>} catways - Validation rules for catways (includes: number, type, state)
  */
 export const rulesByLayout = {
@@ -95,9 +95,9 @@ export const rulesByLayout = {
 
 /**
  * Required fields
- * 
+ *
  * Contains a list of required fields for the request to be valid when submitted.
- * 
+ *
  * @typedef {Object} requiredFields
  * @property {Array<string>} login - Required fields for login request
  * @property {Array<string>} users - Required fields for users request
@@ -113,9 +113,9 @@ export const requiredFields = {
 
 /**
  * Usable fields on update
- * 
+ *
  * Contains usable fields for update operations that can be used in the request.
- * 
+ *
  * @typedef {Object} usableFields
  * @property {Array<string>} users - Users request - fields allowed for update operation
  * @property {Array<string>} catways - Catways request - fields allowed for update operation
@@ -124,5 +124,5 @@ export const requiredFields = {
 export const usableFields = {
   users: ['name', 'firstname', 'username', 'email', 'password'],
   catways: ['state'],
-  reservations: ['idReservation', 'startDate', 'endDate']
-}
+  reservations: ['idReservation', 'startDate', 'endDate'],
+};

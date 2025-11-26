@@ -1,9 +1,9 @@
 /**
  * Async handler wrapper for Express route handlers.
- * 
+ *
  * Catches rejected promises from async function and forwards errors
  * to Express error middleware via `next(err)`.
- * 
+ *
  * @function asyncHandler
  * @param {Function} fn - Async function to wrap (Express route handler).
  * @returns {Function} Express middleware function that handles async errors.

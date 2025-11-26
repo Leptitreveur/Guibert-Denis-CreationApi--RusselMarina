@@ -1,9 +1,9 @@
-import asyncHandler from "../utils/asyncHandler.js";
-import User from "../models/users.js";
+import asyncHandler from '../utils/asyncHandler.js';
+import User from '../models/users.js';
 
 /**
  * User CRUD handler.
- * 
+ *
  * All handlers are wrapped by asyncHandler, which catches rejected promises
  * and forwards errors to Express via `next(err)`.
  * @see ../utils/asyncHandler.js
@@ -11,7 +11,7 @@ import User from "../models/users.js";
 
 /**
  * Create user
- * 
+ *
  * @async
  * @function addUser
  * @param {import('express').Request} req - Request object - Body: `name`, `firstname`, `username`, `email`, `password`.
@@ -32,21 +32,21 @@ const addUser = asyncHandler(async (req, res) => {
 
   if (existingUser) {
     return res.status(409).json({
-      message: "User already exists with this email or username.",
+      message: 'User already exists with this email or username.',
     });
   }
 
   const user = await User.create({ name, firstname, username, email, password });
 
   return res.status(201).json({
-    message: "User successfully created.",
+    message: 'User successfully created.',
     data: user,
   });
 });
 
 /**
  * Retrieve all users.
- * 
+ *
  * @async
  * @function getAllUsers
  * @param {import('express').Request} req - Request object
@@ -61,19 +61,19 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
   if (users.length > 0) {
     return res.status(200).json({
-      message: "Users successfully found.",
+      message: 'Users successfully found.',
       data: users,
     });
   }
 
   return res.status(404).json({
-    message: "No users were found.",
+    message: 'No users were found.',
   });
 });
 
 /**
  * Retrieve a user by email
- * 
+ *
  * @async
  * @function getUserByEmail
  * @param {import('express').Request} req - Request object - Params: `email`.
@@ -90,19 +90,19 @@ const getUserByEmail = asyncHandler(async (req, res) => {
 
   if (user) {
     return res.status(200).json({
-      message: "User successfully found.",
+      message: 'User successfully found.',
       data: user,
     });
   }
 
   return res.status(404).json({
-    message: "User not found.",
+    message: 'User not found.',
   });
 });
 
 /**
  * Update user by email
- * 
+ *
  * @async
  * @function updateUser
  * @param {import('express').Request} req - Request object - Params: `email`; Body: `name`, `firstname`, `username`, `email`, `password`.
@@ -119,27 +119,23 @@ const updateUser = asyncHandler(async (req, res) => {
 
   const { name, firstname, username, email: newEmail, password } = req.body;
 
-  const user = await User.findOneAndUpdate(
-    { email },
-    { name, firstname, username, email: newEmail, password },
-    { runValidators: true, new: true }
-  );
+  const user = await User.findOneAndUpdate({ email }, { name, firstname, username, email: newEmail, password }, { runValidators: true, new: true });
 
   if (user) {
     return res.status(200).json({
-      message: "User successfully updated.",
+      message: 'User successfully updated.',
       data: user,
     });
   }
 
   return res.status(404).json({
-    message: "User not found.",
+    message: 'User not found.',
   });
 });
 
 /**
  * Delete user by email
- * 
+ *
  * @async
  * @function deleteUser
  * @param {import('express').Request} req - Request object - Params: `email`.
@@ -157,13 +153,13 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   if (user) {
     return res.status(200).json({
-      message: "User successfully deleted.",
+      message: 'User successfully deleted.',
       data: user,
     });
   }
 
   return res.status(404).json({
-    message: "User not found.",
+    message: 'User not found.',
   });
 });
 
